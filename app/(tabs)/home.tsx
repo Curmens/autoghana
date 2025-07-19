@@ -1,20 +1,20 @@
-// app/(tabs)/index.jsx
+// src/screens/HomeScreen.js
 import { router } from 'expo-router';
 import React from 'react';
 import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { Button, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from './theme';
 
-export default function HomeScreen() {
+const HomeScreen = ({ navigation }) => {
   const vehicle = {
     name: 'Toyota Camry',
     plate: 'GT 1234-24',
@@ -26,12 +26,12 @@ export default function HomeScreen() {
     {
       icon: 'search',
       label: 'Find Service',
-      action: () => router.push('/service-booking'),
+      action: () => navigation.navigate('ServiceBooking'),
     },
     {
       icon: 'build',
       label: 'Browse Parts',
-      action: () => router.push('/add-vehicle'),
+      action: () => navigation.navigate('MainTabs', { screen: 'Marketplace' }),
     },
   ];
 
@@ -115,9 +115,9 @@ export default function HomeScreen() {
                   </View>
                 </View>
                 <Button 
-                  mode="outlined" 
+                //   mode="outlined" 
                   compact
-                  onPress={() => router.push('/mechanic-profile')}
+                  onPress={() => router.push('/add-vehicle')}
                 >
                   View
                 </Button>
@@ -128,7 +128,7 @@ export default function HomeScreen() {
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -260,3 +260,5 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
   },
 });
+
+export default HomeScreen;

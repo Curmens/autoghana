@@ -1,4 +1,4 @@
-// app/(tabs)/my-garage.tsx
+// app/(tabs)/my-garage.tsx - Fixed with proper theme usage
 import { router } from 'expo-router';
 import React from 'react';
 import {
@@ -82,8 +82,8 @@ export default function MyGarageScreen() {
         style={[
           styles.maintenanceIcon,
           {
-            backgroundColor: item.status === 'Upcoming'
-              ? `${theme.colors.warning}20`
+            backgroundColor: item.status === 'Upcoming' 
+              ? `${theme.colors.warning}20` 
               : `${theme.colors.primary}10`,
           },
         ]}
@@ -102,8 +102,8 @@ export default function MyGarageScreen() {
         style={[
           styles.statusBadge,
           {
-            backgroundColor: item.status === 'Upcoming'
-              ? `${theme.colors.warning}20`
+            backgroundColor: item.status === 'Upcoming' 
+              ? `${theme.colors.warning}20` 
               : `${theme.colors.success}20`,
           },
         ]}
@@ -112,8 +112,8 @@ export default function MyGarageScreen() {
           style={[
             styles.statusText,
             {
-              color: item.status === 'Upcoming'
-                ? theme.colors.warning
+              color: item.status === 'Upcoming' 
+                ? theme.colors.warning 
                 : theme.colors.success,
             },
           ]}

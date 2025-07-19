@@ -403,12 +403,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   infoLabel: {
-    fontSize: theme.fontSize.sm,
+    fontSize: theme.typography.fontSize.sm,
     color: theme.colors.textSecondary,
     marginBottom: theme.spacing.xs,
   },
   infoValue: {
-    fontSize: theme.fontSize.md,
+    fontSize: theme.typography.fontSize.md,
     fontWeight: "500",
     color: theme.colors.text,
   },
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.xs,
   },
   maintenanceMileage: {
-    fontSize: theme.fontSize.xs,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.textSecondary,
     marginTop: theme.spacing.xs,
   },
@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
     padding: theme.spacing.lg,
   },
   errorTitle: {
-    fontSize: theme.fontSize.xl,
+    fontSize: theme.typography.fontSize.xl,
     fontWeight: "bold",
     color: theme.colors.text,
     marginTop: theme.spacing.md,

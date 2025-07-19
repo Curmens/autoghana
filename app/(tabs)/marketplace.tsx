@@ -1,6 +1,6 @@
-// app/(tabs)/marketplace.tsx
-import { router } from "expo-router";
-import React from "react";
+// app/(tabs)/marketplace.tsx - Fixed with proper theme usage
+import { router } from 'expo-router';
+import React from 'react';
 import {
     FlatList,
     Image,
@@ -9,11 +9,11 @@ import {
     Text,
     TouchableOpacity,
     View,
-} from "react-native";
-import { Card, Searchbar } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Icon from "react-native-vector-icons/MaterialIcons";
-import { theme } from "./theme";
+} from 'react-native';
+import { Card, Searchbar } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { theme } from './theme';
 
 interface Product {
     id: number;
@@ -27,28 +27,28 @@ interface Product {
 }
 
 export default function MarketplaceScreen() {
-    const [searchQuery, setSearchQuery] = React.useState("");
+    const [searchQuery, setSearchQuery] = React.useState('');
 
     const products: Product[] = [
         {
             id: 1,
-            name: "NGK Spark Plugs - Set of 4",
-            price: "150",
-            originalPrice: "180",
+            name: 'NGK Spark Plugs - Set of 4',
+            price: '150',
+            originalPrice: '180',
             rating: 4.8,
             reviewCount: 245,
-            image: "https://via.placeholder.com/200x150",
-            seller: "AutoParts Ghana",
+            image: 'https://via.placeholder.com/200x150',
+            seller: 'AutoParts Ghana',
         },
         {
             id: 2,
-            name: "Bosch Air Filter",
-            price: "220",
-            originalPrice: "250",
+            name: 'Bosch Air Filter',
+            price: '220',
+            originalPrice: '250',
             rating: 4.9,
             reviewCount: 132,
-            image: "https://via.placeholder.com/200x150",
-            seller: "Bosch Official Store",
+            image: 'https://via.placeholder.com/200x150',
+            seller: 'Bosch Official Store',
         },
     ];
 
@@ -60,9 +60,7 @@ export default function MarketplaceScreen() {
             <Card style={styles.productCard}>
                 <Image source={{ uri: item.image }} style={styles.productImage} />
                 <Card.Content style={styles.productContent}>
-                    <Text style={styles.productName} numberOfLines={2}>
-                        {item.name}
-                    </Text>
+                    <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
                     <View style={styles.priceRow}>
                         <Text style={styles.price}>GH₵{item.price}</Text>
                         {item.originalPrice && (
@@ -70,13 +68,11 @@ export default function MarketplaceScreen() {
                         )}
                     </View>
                     <View style={styles.ratingRow}>
-                        <Icon name="star" size={16} color="#F59E0B" />
+                        <Icon name="star" size={16} color={theme.colors.warning} />
                         <Text style={styles.rating}>{item.rating}</Text>
                         <Text style={styles.reviewCount}>({item.reviewCount})</Text>
                     </View>
-                    <Text style={styles.seller} numberOfLines={1}>
-                        {item.seller}
-                    </Text>
+                    <Text style={styles.seller} numberOfLines={1}>{item.seller}</Text>
                 </Card.Content>
             </Card>
         </TouchableOpacity>
@@ -129,13 +125,14 @@ const styles = StyleSheet.create({
     },
     searchBar: {
         backgroundColor: theme.colors.surface,
+        elevation: 0,
     },
     productsList: {
         paddingHorizontal: theme.spacing.md,
     },
     productItem: {
-        width: "48%",
-        marginRight: "2%",
+        width: '48%',
+        marginRight: '2%',
         marginBottom: theme.spacing.md,
     },
     productCard: {
@@ -143,7 +140,7 @@ const styles = StyleSheet.create({
         ...theme.shadows.small,
     },
     productImage: {
-        width: "100%",
+        width: '100%',
         height: 120,
         borderTopLeftRadius: theme.borderRadius.md,
         borderTopRightRadius: theme.borderRadius.md,
@@ -156,10 +153,11 @@ const styles = StyleSheet.create({
         fontWeight: theme.fontWeight.semibold,
         color: theme.colors.text,
         marginBottom: theme.spacing.xs,
+        minHeight: 36,
     },
     priceRow: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         gap: theme.spacing.xs,
         marginBottom: theme.spacing.xs,
     },
@@ -171,11 +169,11 @@ const styles = StyleSheet.create({
     originalPrice: {
         fontSize: theme.fontSize.sm,
         color: theme.colors.textSecondary,
-        textDecorationLine: "line-through",
+        textDecorationLine: 'line-through',
     },
     ratingRow: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         gap: theme.spacing.xs,
         marginBottom: theme.spacing.xs,
     },

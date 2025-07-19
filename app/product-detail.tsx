@@ -3,7 +3,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Alert,
-  Dimensions,
+  // Dimensions,
   FlatList,
   Image,
   ScrollView,
@@ -17,7 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from './(tabs)/theme';
 
-const { width } = Dimensions.get('window');
+// const { width } = Dimensions.get('window');
 
 // Mock product data - in a real app, this would be fetched from API
 const productData = {

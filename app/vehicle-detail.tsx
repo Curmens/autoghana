@@ -2,13 +2,13 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import {
-    FlatList,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Button, Card, Chip } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -28,21 +28,21 @@ const vehicleData: Record<string, {
   color: string;
   transmission: string;
   fuelType: string;
-  maintenance: Array<{
+  maintenance: {
     id: number;
     date: string;
     service: string;
     status: string;
     mileage?: string;
     cost?: string;
-  }>;
-  diagnostics: Array<{
+  }[];
+  diagnostics: {
     id: number;
     title: string;
     date: string;
     status: string;
     type: string;
-  }>;
+  }[];
 }> = {
   'GT-1234-24': {
     id: 'GT-1234-24',
@@ -57,41 +57,41 @@ const vehicleData: Record<string, {
     transmission: 'Automatic',
     fuelType: 'Gasoline',
     maintenance: [
-      { 
+      {
         id: 1,
-        date: 'July 15, 2025', 
-        service: 'Oil Change & Filter', 
+        date: 'July 15, 2025',
+        service: 'Oil Change & Filter',
         status: 'Upcoming',
         mileage: '46,000 km'
       },
-      { 
+      {
         id: 2,
-        date: 'May 02, 2025', 
-        service: 'Brake Pad Replacement', 
+        date: 'May 02, 2025',
+        service: 'Brake Pad Replacement',
         status: 'Completed',
         mileage: '44,500 km',
         cost: 'GH₵450'
       },
-      { 
+      {
         id: 3,
-        date: 'February 18, 2025', 
-        service: 'Tire Rotation', 
+        date: 'February 18, 2025',
+        service: 'Tire Rotation',
         status: 'Completed',
         mileage: '43,200 km',
         cost: 'GH₵120'
       },
     ],
     diagnostics: [
-      { 
-        id: 1, 
-        title: 'Engine Check Report', 
+      {
+        id: 1,
+        title: 'Engine Check Report',
         date: 'June 28, 2025',
         status: 'Normal',
         type: 'OBD-II Scan'
       },
-      { 
-        id: 2, 
-        title: 'Brake System Check', 
+      {
+        id: 2,
+        title: 'Brake System Check',
         date: 'May 02, 2025',
         status: 'Attention Required',
         type: 'Visual Inspection'
@@ -111,10 +111,10 @@ const vehicleData: Record<string, {
     transmission: 'Manual',
     fuelType: 'Gasoline',
     maintenance: [
-      { 
+      {
         id: 1,
-        date: 'August 10, 2025', 
-        service: 'Major Service', 
+        date: 'August 10, 2025',
+        service: 'Major Service',
         status: 'Upcoming',
         mileage: '90,000 km'
       }
@@ -134,10 +134,10 @@ export default function VehicleDetailScreen() {
           <Icon name="error" size={64} color={theme.colors.error} />
           <Text style={styles.errorTitle}>Vehicle Not Found</Text>
           <Text style={styles.errorText}>
-            The vehicle you're looking for could not be found.
+            The vehicle you&apos;re looking for could not be found.
           </Text>
-          <Button 
-            mode="contained" 
+          <Button
+            mode="contained"
             onPress={() => router.push('/(tabs)/my-garage')}
             style={styles.errorButton}
           >
@@ -158,18 +158,18 @@ export default function VehicleDetailScreen() {
             <Text style={styles.maintenanceMileage}>at {item.mileage}</Text>
           )}
         </View>
-        <Chip 
+        <Chip
           mode="outlined"
           style={[
             styles.statusChip,
-            item.status === 'Upcoming' 
-              ? styles.upcomingChip 
+            item.status === 'Upcoming'
+              ? styles.upcomingChip
               : styles.completedChip
           ]}
           textStyle={[
             styles.statusText,
-            item.status === 'Upcoming' 
-              ? styles.upcomingText 
+            item.status === 'Upcoming'
+              ? styles.upcomingText
               : styles.completedText
           ]}
         >
@@ -182,7 +182,7 @@ export default function VehicleDetailScreen() {
     </View>
   );
 
-  const renderDiagnosticItem = ({ item }) => (
+  const renderDiagnosticItem = ({ item }: { item: typeof vehicleData['GT-1234-24']['diagnostics'][number] }) => (
     <TouchableOpacity style={styles.diagnosticItem}>
       <View style={styles.diagnosticIcon}>
         <Icon name="description" size={24} color={theme.colors.primary} />
@@ -193,18 +193,18 @@ export default function VehicleDetailScreen() {
         <Text style={styles.diagnosticType}>{item.type}</Text>
       </View>
       <View style={styles.diagnosticStatus}>
-        <Chip 
+        <Chip
           mode="outlined"
           style={[
             styles.statusChip,
-            item.status === 'Normal' 
-              ? styles.normalChip 
+            item.status === 'Normal'
+              ? styles.normalChip
               : styles.attentionChip
           ]}
           textStyle={[
             styles.statusText,
-            item.status === 'Normal' 
-              ? styles.normalText 
+            item.status === 'Normal'
+              ? styles.normalText
               : styles.attentionText
           ]}
         >
@@ -289,8 +289,8 @@ export default function VehicleDetailScreen() {
 
         {/* Maintenance History */}
         <Card style={styles.sectionCard}>
-          <Card.Title 
-            title="Maintenance History" 
+          <Card.Title
+            title="Maintenance History"
             right={(props) => (
               <TouchableOpacity style={styles.sectionAction}>
                 <Text style={styles.sectionActionText}>View All</Text>
@@ -317,10 +317,10 @@ export default function VehicleDetailScreen() {
 
         {/* Diagnostic Reports */}
         <Card style={styles.sectionCard}>
-          <Card.Title 
-            title="Diagnostic Reports" 
+          <Card.Title
+            title="Diagnostic Reports"
             right={(props) => (
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.sectionAction}
                 onPress={() => router.push(`/diagnostics-upload?vehicleId=${vehicleId}`)}
               >
@@ -341,8 +341,8 @@ export default function VehicleDetailScreen() {
               <View style={styles.emptyState}>
                 <Icon name="description" size={48} color={theme.colors.textSecondary} />
                 <Text style={styles.emptyText}>No diagnostic reports uploaded</Text>
-                <Button 
-                  mode="outlined" 
+                <Button
+                  mode="outlined"
                   onPress={() => router.push(`/diagnostics-upload?vehicleId=${vehicleId}`)}
                   style={styles.emptyButton}
                 >

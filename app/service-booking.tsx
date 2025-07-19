@@ -2,14 +2,14 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
-    FlatList,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { Button, Card, ProgressBar } from 'react-native-paper';
@@ -114,20 +114,20 @@ const availableTimes = [
 
 export default function ServiceBookingScreen() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedService, setSelectedService] = useState(null);
-  const [selectedMechanic, setSelectedMechanic] = useState(null);
+  const [selectedService, setSelectedService] = useState<typeof services[0] | null>(null);
+  const [selectedMechanic, setSelectedMechanic] = useState<typeof mechanics[0] | null>(null);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
 
   const totalSteps = 4;
   const progress = currentStep / totalSteps;
 
-  const handleServiceSelect = (service) => {
+  const handleServiceSelect = (service: any) => {
     setSelectedService(service);
     setCurrentStep(2);
   };
 
-  const handleMechanicSelect = (mechanic) => {
+  const handleMechanicSelect = (mechanic : any) => {
     setSelectedMechanic(mechanic);
     setCurrentStep(3);
   };
@@ -143,7 +143,7 @@ export default function ServiceBookingScreen() {
   const handleFinalConfirm = () => {
     Alert.alert(
       'Booking Confirmed!',
-      `Your ${selectedService.name} appointment with ${selectedMechanic.name} is scheduled for ${selectedDate} at ${selectedTime}.`,
+      `Your ${selectedService?.name ?? 'selected service'} appointment with ${selectedMechanic?.name ?? 'selected mechanic'} is scheduled for ${selectedDate} at ${selectedTime}.`,
       [
         {
           text: 'Done',
@@ -386,7 +386,7 @@ export default function ServiceBookingScreen() {
           <View style={styles.noteContent}>
             <Icon name="info" size={20} color={theme.colors.primary} />
             <Text style={styles.noteText}>
-              You will receive a confirmation SMS with the mechanic's contact details.
+              You will receive a confirmation SMS with the mechanic&apos;s contact details.
             </Text>
           </View>
         </Card.Content>

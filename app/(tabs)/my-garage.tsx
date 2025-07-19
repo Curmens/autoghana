@@ -1,22 +1,37 @@
-// app/(tabs)/my-garage.jsx
+// app/(tabs)/my-garage.tsx
 import { router } from 'expo-router';
 import React from 'react';
 import {
-    FlatList,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  FlatList,
+  Image,
+  ListRenderItem,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Button, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from './theme';
 
+interface Vehicle {
+  id: string;
+  name: string;
+  plate: string;
+  image: string;
+}
+
+interface MaintenanceItem {
+  id: number;
+  date: string;
+  service: string;
+  status: string;
+}
+
 export default function MyGarageScreen() {
-  const vehicles = [
+  const vehicles: Vehicle[] = [
     {
       id: 'GT-1234-24',
       name: 'Toyota Camry',
@@ -31,7 +46,7 @@ export default function MyGarageScreen() {
     },
   ];
 
-  const maintenanceTimeline = [
+  const maintenanceTimeline: MaintenanceItem[] = [
     {
       id: 1,
       date: 'July 15, 2025',
@@ -46,7 +61,7 @@ export default function MyGarageScreen() {
     },
   ];
 
-  const renderVehicleItem = ({ item }) => (
+  const renderVehicleItem: ListRenderItem<Vehicle> = ({ item }) => (
     <TouchableOpacity
       style={styles.vehicleItem}
       onPress={() => router.push(`/vehicle-detail?vehicleId=${item.id}`)}
@@ -61,14 +76,14 @@ export default function MyGarageScreen() {
     </TouchableOpacity>
   );
 
-  const renderMaintenanceItem = ({ item }) => (
+  const renderMaintenanceItem: ListRenderItem<MaintenanceItem> = ({ item }) => (
     <View style={styles.maintenanceItem}>
       <View
         style={[
           styles.maintenanceIcon,
           {
-            backgroundColor: item.status === 'Upcoming' 
-              ? `${theme.colors.warning}20` 
+            backgroundColor: item.status === 'Upcoming'
+              ? `${theme.colors.warning}20`
               : `${theme.colors.primary}10`,
           },
         ]}
@@ -87,8 +102,8 @@ export default function MyGarageScreen() {
         style={[
           styles.statusBadge,
           {
-            backgroundColor: item.status === 'Upcoming' 
-              ? `${theme.colors.warning}20` 
+            backgroundColor: item.status === 'Upcoming'
+              ? `${theme.colors.warning}20`
               : `${theme.colors.success}20`,
           },
         ]}
@@ -97,8 +112,8 @@ export default function MyGarageScreen() {
           style={[
             styles.statusText,
             {
-              color: item.status === 'Upcoming' 
-                ? theme.colors.warning 
+              color: item.status === 'Upcoming'
+                ? theme.colors.warning
                 : theme.colors.success,
             },
           ]}

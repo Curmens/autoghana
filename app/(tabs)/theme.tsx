@@ -1,10 +1,58 @@
-// app/theme.jsx
+// app/(tabs)/theme.tsx
+import { TextStyle, ViewStyle } from 'react-native';
 import { DefaultTheme } from 'react-native-paper';
 
-export const theme = {
-  ...DefaultTheme,
+// Define proper theme types
+export interface AppTheme {
   colors: {
-    ...DefaultTheme.colors,
+    primary: string;
+    secondary: string;
+    success: string;
+    warning: string;
+    error: string;
+    background: string;
+    surface: string;
+    text: string;
+    textSecondary: string;
+    border: string;
+    placeholder: string;
+  };
+  spacing: {
+    xs: number;
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+  };
+  borderRadius: {
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+  };
+  fontSize: {
+    xs: number;
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+    xxl: number;
+  };
+  fontWeight: {
+    normal: TextStyle['fontWeight'];
+    medium: TextStyle['fontWeight'];
+    semibold: TextStyle['fontWeight'];
+    bold: TextStyle['fontWeight'];
+  };
+  shadows: {
+    small: ViewStyle;
+    medium: ViewStyle;
+    large: ViewStyle;
+  };
+}
+
+export const theme: AppTheme = {
+  colors: {
     primary: '#1F2937', // Dark Charcoal Gray
     secondary: '#6B7280', // Medium Gray
     success: '#22C55E', // Vibrant Green
@@ -39,10 +87,10 @@ export const theme = {
     xxl: 24,
   },
   fontWeight: {
-    normal: "400",
-    medium: "500",
-    semibold: "600",
-    bold: "700",
+    normal: '400',
+    medium: '500',
+    semibold: '600',
+    bold: '700',
   },
   shadows: {
     small: {
@@ -63,5 +111,19 @@ export const theme = {
       shadowRadius: 8,
       elevation: 5,
     },
+  },
+};
+
+// Paper theme with proper typing
+export const paperTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: theme.colors.primary,
+    surface: theme.colors.surface,
+    background: theme.colors.background,
+    text: theme.colors.text,
+    placeholder: theme.colors.placeholder,
+    error: theme.colors.error,
   },
 };

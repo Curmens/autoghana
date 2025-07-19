@@ -6,13 +6,13 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
-import { theme } from './(tabs)/theme';
+import { paperTheme, theme } from './(tabs)/theme';
 
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <PaperProvider theme={theme}>
+        <PaperProvider theme={paperTheme}>
           <StatusBar style="auto" />
           <Stack
             screenOptions={{
@@ -26,36 +26,36 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen 
-              name="product-detail" 
+            <Stack.Screen
+              name="product-detail"
               options={{ title: 'Product Details' }}
             />
-            <Stack.Screen 
-              name="service-booking" 
+            <Stack.Screen
+              name="service-booking"
               options={{ title: 'Book Service' }}
             />
-            <Stack.Screen 
-              name="mechanic-profile" 
+            <Stack.Screen
+              name="mechanic-profile"
               options={{ title: 'Mechanic Profile' }}
             />
-            <Stack.Screen 
-              name="add-vehicle" 
+            <Stack.Screen
+              name="add-vehicle"
               options={{ title: 'Add Vehicle' }}
             />
-            <Stack.Screen 
-              name="vin-scanner" 
+            <Stack.Screen
+              name="vin-scanner"
               options={{ title: 'Scan VIN' }}
             />
-            <Stack.Screen 
-              name="manual-vehicle-entry" 
+            <Stack.Screen
+              name="manual-vehicle-entry"
               options={{ title: 'Enter Vehicle Details' }}
             />
-            <Stack.Screen 
-              name="vehicle-detail" 
+            <Stack.Screen
+              name="vehicle-detail"
               options={{ title: 'Vehicle Details' }}
             />
-            <Stack.Screen 
-              name="diagnostics-upload" 
+            <Stack.Screen
+              name="diagnostics-upload"
               options={{ title: 'Upload Diagnostics' }}
             />
           </Stack>

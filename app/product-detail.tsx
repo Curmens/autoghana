@@ -2,15 +2,15 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
-    Dimensions,
-    FlatList,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Dimensions,
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Button, Card, Chip, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -49,8 +49,8 @@ const productData = {
       'Quantity': '4 pieces'
     },
     compatibility: ['Toyota Camry 2018-2024', 'Honda Accord 2019-2024', 'Nissan Altima 2020-2024'],
-    seller: { 
-      name: 'AutoParts Ghana', 
+    seller: {
+      name: 'AutoParts Ghana',
       isVerified: true,
       rating: 4.9,
       location: 'Accra, Ghana'
@@ -86,8 +86,8 @@ const productData = {
       'Efficiency': '99.5%'
     },
     compatibility: ['Toyota Camry 2018-2024', 'Lexus ES 2019-2024'],
-    seller: { 
-      name: 'Bosch Official Store', 
+    seller: {
+      name: 'Bosch Official Store',
       isVerified: true,
       rating: 4.8,
       location: 'Kumasi, Ghana'
@@ -103,7 +103,7 @@ export default function ProductDetailScreen() {
   const { productId } = useLocalSearchParams();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  
+
   const product = productData[productId as unknown as keyof typeof productData];
 
   if (!product) {
@@ -113,10 +113,10 @@ export default function ProductDetailScreen() {
           <Icon name="error" size={64} color={theme.colors.error} />
           <Text style={styles.errorTitle}>Product Not Found</Text>
           <Text style={styles.errorText}>
-            The product you're looking for could not be found.
+            The product you&apos;re looking for could not be found.
           </Text>
-          <Button 
-            mode="contained" 
+          <Button
+            mode="contained"
             onPress={() => router.push('/(tabs)/marketplace')}
             style={styles.errorButton}
           >
@@ -149,7 +149,7 @@ export default function ProductDetailScreen() {
     );
   };
 
-  const renderImageItem = ({ item, index }) => (
+  const renderImageItem = ({ item, index }: { item: string; index: number }) => (
     <TouchableOpacity onPress={() => setSelectedImageIndex(index)}>
       <Image source={{ uri: item }} style={styles.galleryImage} />
     </TouchableOpacity>
@@ -173,11 +173,11 @@ export default function ProductDetailScreen() {
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Main Product Image */}
         <View style={styles.imageContainer}>
-          <Image 
-            source={{ uri: product.images[selectedImageIndex] }} 
-            style={styles.mainImage} 
+          <Image
+            source={{ uri: product.images[selectedImageIndex] }}
+            style={styles.mainImage}
           />
-          
+
           {/* Discount Badge */}
           {product.originalPrice && (
             <View style={styles.discountBadge}>
@@ -212,7 +212,7 @@ export default function ProductDetailScreen() {
         {/* Product Info */}
         <View style={styles.productInfo}>
           <Text style={styles.productName}>{product.name}</Text>
-          
+
           <View style={styles.priceRow}>
             <View style={styles.priceContainer}>
               <Text style={styles.price}>GH₵{product.price}</Text>
@@ -220,7 +220,7 @@ export default function ProductDetailScreen() {
                 <Text style={styles.originalPrice}>GH₵{product.originalPrice}</Text>
               )}
             </View>
-            
+
             <View style={styles.ratingContainer}>
               <Icon name="star" size={20} color="#F59E0B" />
               <Text style={styles.rating}>{product.rating}</Text>
@@ -236,14 +236,14 @@ export default function ProductDetailScreen() {
           <Card.Content style={styles.quantityContent}>
             <Text style={styles.quantityLabel}>Quantity:</Text>
             <View style={styles.quantitySelector}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.quantityButton}
                 onPress={() => setQuantity(Math.max(1, quantity - 1))}
               >
                 <Icon name="remove" size={20} color={theme.colors.primary} />
               </TouchableOpacity>
               <Text style={styles.quantityValue}>{quantity}</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.quantityButton}
                 onPress={() => setQuantity(Math.min(product.quantity, quantity + 1))}
               >

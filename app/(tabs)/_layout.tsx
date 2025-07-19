@@ -1,68 +1,90 @@
-// app/_layout.tsx
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+// app/(tabs)/_layout.tsx
+import { Tabs } from 'expo-router';
 import React from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Provider as PaperProvider } from 'react-native-paper';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import Toast from 'react-native-toast-message';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from './theme';
 
-export default function RootLayout() {
+export default function TabLayout() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <PaperProvider theme={theme}>
-          <StatusBar style='auto' />
-          <Stack
-            screenOptions={{
-              headerStyle: {
-                backgroundColor: theme.colors.primary,
-              },
-              headerTintColor: 'white',
-              headerTitleStyle: {
-                fontWeight: 'bold',
-              },
-            }}
-          >
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen 
-              name="product-detail" 
-              options={{ title: 'Product Details' }}
-            />
-            <Stack.Screen 
-              name="service-booking" 
-              options={{ title: 'Book Service' }}
-            />
-            <Stack.Screen 
-              name="mechanic-profile" 
-              options={{ title: 'Mechanic Profile' }}
-            />
-            <Stack.Screen 
-              name="add-vehicle" 
-              options={{ title: 'Add Vehicle' }}
-            />
-            <Stack.Screen 
-              name="vin-scanner" 
-              options={{ title: 'Scan VIN' }}
-            />
-            <Stack.Screen 
-              name="manual-vehicle-entry" 
-              options={{ title: 'Enter Vehicle Details' }}
-            />
-            <Stack.Screen 
-              name="vehicle-detail" 
-              options={{ title: 'Vehicle Details' }}
-            />
-            <Stack.Screen 
-              name="diagnostics-upload" 
-              options={{ title: 'Upload Diagnostics' }}
-            />
-          </Stack>
-          <Toast />
-        </PaperProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <Tabs
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: string;
+
+          if (route.name === 'index') {
+            iconName = 'home';
+          } else if (route.name === 'my-garage') {
+            iconName = 'directions-car';
+          } else if (route.name === 'marketplace') {
+            iconName = 'store';
+          } else if (route.name === 'reports') {
+            iconName = 'place';
+          } else if (route.name === 'profile') {
+            iconName = 'person';
+          } else {
+            iconName = 'help';
+          }
+
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: '#6B7280',
+        tabBarStyle: {
+          backgroundColor: 'white',
+          borderTopWidth: 1,
+          borderTopColor: '#E5E7EB',
+          paddingBottom: 5,
+          paddingTop: 5,
+          height: 60,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '500',
+        },
+        headerShown: false,
+      })}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
+          href: '/'
+        }}
+      />
+      <Tabs.Screen
+        name="my-garage"
+        options={{ title: 'My Garage' }}
+      />
+      <Tabs.Screen
+        name="marketplace"
+        options={{ title: 'Marketplace' }}
+      />
+      <Tabs.Screen
+        name="reports"
+        options={{ title: 'Reports' }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{ title: 'Profile' }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="home"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="theme"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+    </Tabs>
   );
 }

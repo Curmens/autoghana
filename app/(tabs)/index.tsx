@@ -1,4 +1,4 @@
-// app/(tabs)/index.jsx
+// app/(tabs)/index.tsx
 import { router } from 'expo-router';
 import React from 'react';
 import {
@@ -83,10 +83,10 @@ export default function HomeScreen() {
               style={styles.actionCard}
               onPress={action.action}
             >
-              <Icon 
-                name={action.icon} 
-                size={24} 
-                color={theme.colors.primary} 
+              <Icon
+                name={action.icon}
+                size={24}
+                color={theme.colors.primary}
               />
               <Text style={styles.actionLabel}>{action.label}</Text>
             </TouchableOpacity>
@@ -99,23 +99,23 @@ export default function HomeScreen() {
           {nearbyServices.map((service, index) => (
             <Card key={index} style={styles.serviceCard}>
               <Card.Content style={styles.serviceContent}>
-                <Image 
-                  source={{ uri: service.image }} 
-                  style={styles.serviceImage} 
+                <Image
+                  source={{ uri: service.image }}
+                  style={styles.serviceImage}
                 />
                 <View style={styles.serviceInfo}>
                   <Text style={styles.serviceName}>{service.name}</Text>
                   <View style={styles.locationRow}>
-                    <Icon 
-                      name="place" 
-                      size={16} 
-                      color={theme.colors.textSecondary} 
+                    <Icon
+                      name="place"
+                      size={16}
+                      color={theme.colors.textSecondary}
                     />
                     <Text style={styles.serviceLocation}>{service.location}</Text>
                   </View>
                 </View>
-                <Button 
-                  mode="outlined" 
+                <Button
+                  mode="outlined"
                   compact
                   onPress={() => router.push('/mechanic-profile')}
                 >

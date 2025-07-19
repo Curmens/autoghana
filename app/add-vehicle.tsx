@@ -1,11 +1,11 @@
-// app/add-vehicle.jsx
+// app/add-vehicle.tsx
 import { router } from 'expo-router';
 import React from 'react';
 import {
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: theme.fontSize.xxl,
-    fontWeight: '700', // Updated to a compatible value
+    fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
     textAlign: 'center',
     marginBottom: theme.spacing.sm,
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   },
   optionTitle: {
     fontSize: theme.fontSize.md,
-    fontWeight: '600',
+    fontWeight: theme.fontWeight.semibold,
     color: 'white',
   },
   outlineText: {

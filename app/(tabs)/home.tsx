@@ -2,19 +2,25 @@
 import { router } from 'expo-router';
 import React from 'react';
 import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Button, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from './theme';
 
-const HomeScreen = ({ navigation }) => {
+import type { NavigationProp } from '@react-navigation/native';
+
+interface HomeScreenProps {
+  navigation: NavigationProp<any>;
+}
+
+const HomeScreen = ({ navigation }: HomeScreenProps) => {
   const vehicle = {
     name: 'Toyota Camry',
     plate: 'GT 1234-24',

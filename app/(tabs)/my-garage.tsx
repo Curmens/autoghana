@@ -6,6 +6,7 @@ import {
   Image,
   ListRenderItem,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -82,8 +83,8 @@ export default function MyGarageScreen() {
         style={[
           styles.maintenanceIcon,
           {
-            backgroundColor: item.status === 'Upcoming' 
-              ? `${theme.colors.warning}20` 
+            backgroundColor: item.status === 'Upcoming'
+              ? `${theme.colors.warning}20`
               : `${theme.colors.primary}10`,
           },
         ]}
@@ -102,8 +103,8 @@ export default function MyGarageScreen() {
         style={[
           styles.statusBadge,
           {
-            backgroundColor: item.status === 'Upcoming' 
-              ? `${theme.colors.warning}20` 
+            backgroundColor: item.status === 'Upcoming'
+              ? `${theme.colors.warning}20`
               : `${theme.colors.success}20`,
           },
         ]}
@@ -112,8 +113,8 @@ export default function MyGarageScreen() {
           style={[
             styles.statusText,
             {
-              color: item.status === 'Upcoming' 
-                ? theme.colors.warning 
+              color: item.status === 'Upcoming'
+                ? theme.colors.warning
                 : theme.colors.success,
             },
           ]}
@@ -126,7 +127,9 @@ export default function MyGarageScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <StatusBar barStyle="dark-content" backgroundColor={theme.colors.white} />
+
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>My Garage</Text>
@@ -178,7 +181,10 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    paddingHorizontal: theme.spacing.md,
+    paddingHorizontal: theme.spacing.xl,
+  },
+  scrollContent: {
+    paddingBottom: theme.spacing.xxxl,
   },
   header: {
     flexDirection: 'row',

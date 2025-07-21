@@ -1,4 +1,4 @@
-// app/vin-scanner.tsx
+// app/vin-scanner.tsx - Updated with Airbnb theme
 import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -11,37 +11,53 @@ export default function VinScannerScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.content}>
-                <Icon
-                    name="qr-code-scanner"
-                    size={64}
-                    color={theme.colors.textSecondary}
-                />
+                <View style={styles.iconContainer}>
+                    <Icon
+                        name="qr-code-scanner"
+                        size={80}
+                        color={theme.colors.primary}
+                    />
+                </View>
+                
                 <Text style={styles.title}>VIN Scanner</Text>
                 <Text style={styles.subtitle}>
-                    Camera-based VIN scanning feature coming soon!
+                    We&apos;re working on bringing you camera-based VIN scanning to make adding your vehicle even easier.
                 </Text>
-                <Button
-                    mode="outlined"
-                    onPress={() => router.push("/manual-vehicle-entry")}
-                    style={styles.button}
-                >
-                    Enter Details Manually Instead
-                </Button>
-            </View>
-        </SafeAreaView>
-    );
-}
+                
+                <View style={styles.featuresList}>
+                    <View style={styles.featureItem}>
+                        <Icon name="camera-alt" size={20} color={theme.colors.success} />
+                        <Text style={styles.featureText}>Instant VIN recognition</Text>
+                    </View>
+                    <View style={styles.featureItem}>
+                        <Icon name="auto-fix-high" size={20} color={theme.colors.success} />
+                        <Text style={styles.featureText}>Auto-fill vehicle details</Text>
+                    </View>
+                    <View style={styles.featureItem}>
+                        <Icon name="speed" size={20} color={theme.colors.success} />
+                        <Text style={styles.featureText}>Save time & reduce errors</Text>
+                    </View>
+                </View>
 
-// app/diagnostics-upload.tsx
-export function DiagnosticsUploadScreen() {
-    return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.content}>
-                <Icon name="upload" size={64} color={theme.colors.textSecondary} />
-                <Text style={styles.title}>Upload Diagnostics</Text>
-                <Text style={styles.subtitle}>
-                    Diagnostic report upload feature coming soon!
-                </Text>
+                <View style={styles.actionButtons}>
+                    <Button
+                        mode="contained"
+                        onPress={() => router.push("/manual-vehicle-entry")}
+                        style={styles.primaryButton}
+                        contentStyle={styles.buttonContent}
+                    >
+                        Enter Details Manually
+                    </Button>
+                    
+                    <Button
+                        mode="outlined"
+                        onPress={() => router.back()}
+                        style={styles.secondaryButton}
+                        contentStyle={styles.buttonContent}
+                    >
+                        Go Back
+                    </Button>
+                </View>
             </View>
         </SafeAreaView>
     );
@@ -56,24 +72,60 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        padding: theme.spacing.lg,
+        padding: theme.spacing.xl,
+    },
+    iconContainer: {
+        width: 120,
+        height: 120,
+        borderRadius: theme.borderRadius.xl,
+        backgroundColor: `${theme.colors.primary}15`,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: theme.spacing.xl,
     },
     title: {
-        fontSize: theme.fontSize.xl,
-        fontWeight: theme.fontWeight.bold,
-        color: theme.colors.text,
-        marginTop: theme.spacing.md,
-        marginBottom: theme.spacing.sm,
+        fontSize: theme.typography?.sizes.heading,
+        fontWeight: theme.typography?.weights.semibold,
+        color: theme.colors.textPrimary,
+        marginBottom: theme.spacing.md,
         textAlign: "center",
     },
     subtitle: {
-        fontSize: theme.fontSize.md,
+        fontSize: theme.typography?.sizes.bodyLarge,
         color: theme.colors.textSecondary,
         textAlign: "center",
-        marginBottom: theme.spacing.lg,
+        lineHeight: theme.typography?.lineHeights.normal * theme.typography?.sizes.bodyLarge,
+        marginBottom: theme.spacing.xxxl,
         paddingHorizontal: theme.spacing.md,
     },
-    button: {
-        marginTop: theme.spacing.md,
+    featuresList: {
+        alignSelf: 'stretch',
+        marginBottom: theme.spacing.xxxl,
+        gap: theme.spacing.lg,
+    },
+    featureItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: theme.spacing.lg,
+        paddingHorizontal: theme.spacing.lg,
+    },
+    featureText: {
+        fontSize: theme.typography?.sizes.bodyLarge,
+        color: theme.colors.textPrimary,
+        fontWeight: theme.typography?.weights.medium,
+    },
+    actionButtons: {
+        alignSelf: 'stretch',
+        gap: theme.spacing.lg,
+    },
+    primaryButton: {
+        borderRadius: theme.borderRadius.xl,
+    },
+    secondaryButton: {
+        borderRadius: theme.borderRadius.xl,
+        borderColor: theme.colors.lighter,
+    },
+    buttonContent: {
+        paddingVertical: theme.spacing.md,
     },
 });

@@ -149,6 +149,9 @@ export interface AppTheme {
     light?: string;
     lighter?: string;
     lightest?: string;
+
+    // text colors
+    textPrimary?: string;
   };
   
   spacing: {

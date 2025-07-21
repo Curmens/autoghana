@@ -31,7 +31,6 @@
       },
       "package": "com.autoghana.app",
       "permissions": [
-        "CAMERA",
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
         "READ_EXTERNAL_STORAGE",

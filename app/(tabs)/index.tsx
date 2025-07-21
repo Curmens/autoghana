@@ -44,7 +44,7 @@ export default function AirbnbHomeScreen() {
       id: 'parts',
       icon: 'shopping-cart',
       label: 'Browse Parts',
-      subtitle: 'Auto parts & accessories',
+      subtitle: 'Auto parts',
       color: theme.colors.secondary,
       image: 'https://via.placeholder.com/80x80',
     },
@@ -99,7 +99,18 @@ export default function AirbnbHomeScreen() {
     },
   ];
 
-  const AirbnbCard = ({ children, style = {}, shadow = 'soft' }: any) => (
+  type ShadowType = keyof typeof theme.shadows;
+  const AirbnbCard = ({
+    children,
+    style = {
+      borderWidth: 0,
+    },
+    shadow = 'soft',
+  }: {
+    children: React.ReactNode;
+    style?: object;
+    shadow?: ShadowType;
+  }) => (
     <View style={[styles.airbnbCard, theme.shadows[shadow], style]}>
       {children}
     </View>
@@ -117,8 +128,8 @@ export default function AirbnbHomeScreen() {
       <Text style={styles.progressLabel}>Service Progress</Text>
       <View style={styles.progressContainer}>
         <View style={styles.progressTrack}>
-          <View 
-            style={[styles.progressBar, { width: `${progress * 100}%` }]} 
+          <View
+            style={[styles.progressBar, { width: `${progress * 100}%` }]}
           />
         </View>
         <Text style={styles.progressText}>{Math.round(progress * 100)}% complete</Text>
@@ -129,7 +140,7 @@ export default function AirbnbHomeScreen() {
   const QuickActionCard = ({ action }: any) => (
     <TouchableOpacity
       style={styles.quickActionContainer}
-      onPress={() => router.push(`/${action.id}`)}
+      onPress={() => router.push(`/reports`)}
       activeOpacity={0.9}
     >
       <AirbnbCard style={styles.quickActionCard}>
@@ -159,27 +170,27 @@ export default function AirbnbHomeScreen() {
             ))}
           </View>
         </View>
-        
+
         <View style={styles.serviceContent}>
           <View style={styles.serviceHeader}>
             <Text style={styles.serviceName}>{service.name}</Text>
             <Text style={styles.serviceSpecialty}>{service.specialty}</Text>
           </View>
-          
+
           <View style={styles.serviceLocationRow}>
             <Icon name="place" size={14} color={theme.colors.textSecondary} />
             <Text style={styles.serviceLocation}>{service.location}</Text>
           </View>
-          
+
           <Text style={styles.serviceDistance}>{service.distance}</Text>
-          
+
           <View style={styles.serviceRatingRow}>
             <Icon name="star" size={16} color={theme.colors.warning} />
             <Text style={styles.serviceRating}>{service.rating}</Text>
             <Text style={styles.serviceReviews}>({service.reviewCount} reviews)</Text>
             <Text style={styles.servicePrice}> • {service.price}</Text>
           </View>
-          
+
           <View style={styles.serviceFeatures}>
             {service.features.slice(0, 2).map((feature: string, index: number) => (
               <View key={index} style={styles.featureTag}>
@@ -188,7 +199,7 @@ export default function AirbnbHomeScreen() {
               </View>
             ))}
           </View>
-          
+
           <View style={styles.serviceFooter}>
             <Text style={styles.serviceAvailability}>{service.availability}</Text>
             <Text style={styles.serviceResponse}>{service.responseTime}</Text>
@@ -201,8 +212,8 @@ export default function AirbnbHomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={theme.colors.white} />
-      
-      <ScrollView 
+
+      <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
@@ -214,21 +225,23 @@ export default function AirbnbHomeScreen() {
               <Text style={styles.greeting}>Hi, Kofi!</Text>
               <Text style={styles.location}>Accra, Greater Accra • 29°C ☀️</Text>
             </View>
-            
+
             <View style={styles.headerActions}>
               <IconButton
                 icon="notifications-none"
                 size={24}
-                iconColor={theme.colors.textPrimary}
+                iconColor={theme.colors.primary}
                 style={styles.headerButton}
                 onPress={() => console.log('Notifications')}
               />
               <TouchableOpacity style={styles.profileButton}>
-                <Icon name="account-circle" size={32} color={theme.colors.textSecondary} />
+                <Icon name="account-circle" size={32} color={theme.colors.textSecondary} onPress={
+                  () => router.push('/profile')
+                } />
               </TouchableOpacity>
             </View>
           </View>
-          
+
           {/* Search Bar */}
           <View style={styles.searchSection}>
             <Searchbar
@@ -245,7 +258,7 @@ export default function AirbnbHomeScreen() {
         {/* Hero Vehicle Section */}
         <View style={styles.section}>
           <TouchableOpacity
-            onPress={() => router.push('/vehicle-detail?vehicleId=GT-1234-24')}
+            onPress={() => router.push('/vehicle-detail')}
             activeOpacity={0.95}
           >
             <AirbnbCard style={styles.vehicleCard} shadow="medium">
@@ -256,26 +269,26 @@ export default function AirbnbHomeScreen() {
                   <Text style={styles.vehiclePlate}>{vehicle.plate}</Text>
                   <VehicleStatusBadge status={vehicle.status} />
                 </View>
-                
+
                 <View style={styles.vehicleIcon}>
                   <Icon name="directions-car" size={48} color={theme.colors.primary} />
                 </View>
               </View>
-              
+
               <View style={styles.vehicleStats}>
                 <View style={styles.vehicleStatItem}>
                   <Text style={styles.vehicleStatValue}>{vehicle.mileage}</Text>
                   <Text style={styles.vehicleStatLabel}>Current Mileage</Text>
                 </View>
-                
+
                 <View style={styles.vehicleStatDivider} />
-                
+
                 <View style={styles.vehicleStatItem}>
                   <Text style={styles.vehicleStatValue}>{vehicle.serviceDue}</Text>
                   <Text style={styles.vehicleStatLabel}>Next Service</Text>
                 </View>
               </View>
-              
+
               <ServiceProgressIndicator progress={vehicle.serviceProgress} />
             </AirbnbCard>
           </TouchableOpacity>
@@ -297,14 +310,14 @@ export default function AirbnbHomeScreen() {
             <Text style={styles.sectionTitle}>Featured auto services</Text>
             <Text style={styles.sectionSubtitle}>Highly rated by the AutoGhana community</Text>
           </View>
-          
+
           <View style={styles.featuredServices}>
             {featuredServices.map((service) => (
               <FeaturedServiceCard key={service.id} service={service} />
             ))}
           </View>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.showMoreButton}
             onPress={() => router.push('/service-booking')}
           >
@@ -330,7 +343,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: theme.spacing.xxxl,
   },
-  
+
   // Header Styles
   header: {
     backgroundColor: theme.colors.white,
@@ -350,15 +363,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   greeting: {
-    fontSize: theme.typography.sizes.heading,
-    fontWeight: theme.typography.weights.semibold,
+    fontSize: theme.typography?.sizes.heading,
+    fontWeight: theme.typography?.weights.semibold,
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.xs,
   },
   location: {
-    fontSize: theme.typography.sizes.body,
+    fontSize: theme.typography?.sizes.body,
     color: theme.colors.textSecondary,
-    fontWeight: theme.typography.weights.regular,
+    fontWeight: theme.typography?.weights.regular,
   },
   headerActions: {
     flexDirection: 'row',
@@ -381,14 +394,15 @@ const styles = StyleSheet.create({
     elevation: 0,
   },
   searchInput: {
-    fontSize: theme.typography.sizes.body,
+    fontSize: theme.typography?.sizes.body,
   },
 
   // Card Base
   airbnbCard: {
     backgroundColor: theme.colors.card,
     borderRadius: theme.borderRadius.xl,
-    borderWidth: 1,
+    borderWidth: .8,
+    shadowOffset: { width: 0, height: 1 },
     borderColor: theme.colors.lighter,
   },
 
@@ -401,15 +415,15 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xl,
   },
   sectionTitle: {
-    fontSize: theme.typography.sizes.titleLarge,
-    fontWeight: theme.typography.weights.semibold,
+    fontSize: theme.typography?.sizes.titleLarge,
+    fontWeight: theme.typography?.weights.semibold,
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.sm,
   },
   sectionSubtitle: {
-    fontSize: theme.typography.sizes.body,
+    fontSize: theme.typography?.sizes.body,
     color: theme.colors.textSecondary,
-    lineHeight: theme.typography.lineHeights.normal * theme.typography.sizes.body,
+    lineHeight: (theme.typography?.lineHeights.normal ?? 1.2) * (theme.typography?.sizes.body ?? 16),
   },
 
   // Vehicle Card Styles
@@ -426,19 +440,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   vehicleTitle: {
-    fontSize: theme.typography.sizes.body,
+    fontSize: theme.typography?.sizes.body,
     color: theme.colors.textSecondary,
-    fontWeight: theme.typography.weights.medium,
+    fontWeight: theme.typography?.weights.medium,
     marginBottom: theme.spacing.sm,
   },
   vehicleName: {
-    fontSize: theme.typography.sizes.titleLarge,
-    fontWeight: theme.typography.weights.semibold,
+    fontSize: theme.typography?.sizes.titleLarge,
+    fontWeight: theme.typography?.weights.semibold,
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.xs,
   },
   vehiclePlate: {
-    fontSize: theme.typography.sizes.bodyLarge,
+    fontSize: theme.typography?.sizes.bodyLarge,
     color: theme.colors.textSecondary,
     marginBottom: theme.spacing.md,
   },
@@ -457,13 +471,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   vehicleStatValue: {
-    fontSize: theme.typography.sizes.title,
-    fontWeight: theme.typography.weights.semibold,
+    fontSize: theme.typography?.sizes.title,
+    fontWeight: theme.typography?.weights.semibold,
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.xs,
   },
   vehicleStatLabel: {
-    fontSize: theme.typography.sizes.caption,
+    fontSize: theme.typography?.sizes.caption,
     color: theme.colors.textSecondary,
     textAlign: 'center',
   },
@@ -491,8 +505,8 @@ const styles = StyleSheet.create({
     marginRight: theme.spacing.sm,
   },
   statusText: {
-    fontSize: theme.typography.sizes.caption,
-    fontWeight: theme.typography.weights.medium,
+    fontSize: theme.typography?.sizes.caption,
+    fontWeight: theme.typography?.weights.medium,
     color: theme.colors.textSecondary,
   },
 
@@ -503,8 +517,8 @@ const styles = StyleSheet.create({
     borderTopColor: theme.colors.lightest,
   },
   progressLabel: {
-    fontSize: theme.typography.sizes.body,
-    fontWeight: theme.typography.weights.medium,
+    fontSize: theme.typography?.sizes.body,
+    fontWeight: theme.typography?.weights.medium,
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.md,
   },
@@ -526,8 +540,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   progressText: {
-    fontSize: theme.typography.sizes.caption,
-    fontWeight: theme.typography.weights.medium,
+    fontSize: theme.typography?.sizes.caption,
+    fontWeight: theme.typography?.weights.medium,
     color: theme.colors.textSecondary,
   },
 
@@ -553,13 +567,13 @@ const styles = StyleSheet.create({
     padding: theme.spacing.lg,
   },
   quickActionLabel: {
-    fontSize: theme.typography.sizes.bodyLarge,
-    fontWeight: theme.typography.weights.semibold,
+    fontSize: theme.typography?.sizes.bodyLarge,
+    fontWeight: theme.typography?.weights.semibold,
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.xs,
   },
   quickActionSubtitle: {
-    fontSize: theme.typography.sizes.body,
+    fontSize: theme.typography?.sizes.body,
     color: theme.colors.textSecondary,
   },
 
@@ -597,8 +611,8 @@ const styles = StyleSheet.create({
     ...theme.shadows.subtle,
   },
   serviceBadgeText: {
-    fontSize: theme.typography.sizes.caption,
-    fontWeight: theme.typography.weights.semibold,
+    fontSize: theme.typography?.sizes.caption,
+    fontWeight: theme.typography?.weights.semibold,
     color: theme.colors.textPrimary,
   },
   serviceContent: {
@@ -608,13 +622,13 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   serviceName: {
-    fontSize: theme.typography.sizes.title,
-    fontWeight: theme.typography.weights.semibold,
+    fontSize: theme.typography?.sizes.title,
+    fontWeight: theme.typography?.weights.semibold,
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.xs,
   },
   serviceSpecialty: {
-    fontSize: theme.typography.sizes.body,
+    fontSize: theme.typography?.sizes.body,
     color: theme.colors.textSecondary,
   },
   serviceLocationRow: {
@@ -624,11 +638,11 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xs,
   },
   serviceLocation: {
-    fontSize: theme.typography.sizes.body,
+    fontSize: theme.typography?.sizes.body,
     color: theme.colors.textSecondary,
   },
   serviceDistance: {
-    fontSize: theme.typography.sizes.body,
+    fontSize: theme.typography?.sizes.body,
     color: theme.colors.textSecondary,
     marginBottom: theme.spacing.md,
   },
@@ -639,17 +653,17 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   serviceRating: {
-    fontSize: theme.typography.sizes.body,
-    fontWeight: theme.typography.weights.semibold,
+    fontSize: theme.typography?.sizes.body,
+    fontWeight: theme.typography?.weights.semibold,
     color: theme.colors.textPrimary,
   },
   serviceReviews: {
-    fontSize: theme.typography.sizes.body,
+    fontSize: theme.typography?.sizes.body,
     color: theme.colors.textSecondary,
   },
   servicePrice: {
-    fontSize: theme.typography.sizes.body,
-    fontWeight: theme.typography.weights.semibold,
+    fontSize: theme.typography?.sizes.body,
+    fontWeight: theme.typography?.weights.semibold,
     color: theme.colors.textPrimary,
   },
   serviceFeatures: {
@@ -663,7 +677,7 @@ const styles = StyleSheet.create({
     gap: theme.spacing.xs,
   },
   featureText: {
-    fontSize: theme.typography.sizes.caption,
+    fontSize: theme.typography?.sizes.caption,
     color: theme.colors.textSecondary,
   },
   serviceFooter: {
@@ -672,13 +686,13 @@ const styles = StyleSheet.create({
     borderTopColor: theme.colors.lightest,
   },
   serviceAvailability: {
-    fontSize: theme.typography.sizes.body,
-    fontWeight: theme.typography.weights.medium,
+    fontSize: theme.typography?.sizes.body,
+    fontWeight: theme.typography?.weights.medium,
     color: theme.colors.success,
     marginBottom: theme.spacing.xs,
   },
   serviceResponse: {
-    fontSize: theme.typography.sizes.caption,
+    fontSize: theme.typography?.sizes.caption,
     color: theme.colors.textSecondary,
   },
 
@@ -694,8 +708,8 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.xl,
   },
   showMoreText: {
-    fontSize: theme.typography.sizes.bodyLarge,
-    fontWeight: theme.typography.weights.semibold,
+    fontSize: theme.typography?.sizes.bodyLarge,
+    fontWeight: theme.typography?.weights.semibold,
     color: theme.colors.primary,
   },
 

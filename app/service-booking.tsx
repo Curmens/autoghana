@@ -18,49 +18,49 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from './(tabs)/theme';
 
 const services = [
-  { 
-    id: 1, 
-    name: 'Oil Change', 
+  {
+    id: 1,
+    name: 'Oil Change',
     icon: 'opacity',
     description: 'Full synthetic oil change with filter replacement',
     duration: '30 mins',
     price: 'GH₵120'
   },
-  { 
-    id: 2, 
-    name: 'Brake Repair', 
+  {
+    id: 2,
+    name: 'Brake Repair',
     icon: 'album',
     description: 'Brake pad replacement and system inspection',
     duration: '2 hours',
     price: 'GH₵350'
   },
-  { 
-    id: 3, 
-    name: 'Tire Rotation', 
+  {
+    id: 3,
+    name: 'Tire Rotation',
     icon: 'settings',
     description: 'Complete tire rotation and pressure check',
     duration: '45 mins',
     price: 'GH₵80'
   },
-  { 
-    id: 4, 
-    name: 'AC Service', 
+  {
+    id: 4,
+    name: 'AC Service',
     icon: 'ac-unit',
     description: 'Air conditioning system service and recharge',
     duration: '1 hour',
     price: 'GH₵200'
   },
-  { 
-    id: 5, 
-    name: 'Engine Diagnostics', 
+  {
+    id: 5,
+    name: 'Engine Diagnostics',
     icon: 'search',
     description: 'Comprehensive engine diagnostic scan',
     duration: '45 mins',
     price: 'GH₵150'
   },
-  { 
-    id: 6, 
-    name: 'Battery Service', 
+  {
+    id: 6,
+    name: 'Battery Service',
     icon: 'battery-full',
     description: 'Battery testing and replacement if needed',
     duration: '30 mins',
@@ -108,7 +108,7 @@ const mechanics = [
 ];
 
 const availableTimes = [
-  '09:00 AM', '10:30 AM', '12:00 PM', 
+  '09:00 AM', '10:30 AM', '12:00 PM',
   '01:30 PM', '03:00 PM', '04:30 PM'
 ];
 
@@ -127,7 +127,7 @@ export default function ServiceBookingScreen() {
     setCurrentStep(2);
   };
 
-  const handleMechanicSelect = (mechanic : any) => {
+  const handleMechanicSelect = (mechanic: any) => {
     setSelectedMechanic(mechanic);
     setCurrentStep(3);
   };
@@ -282,7 +282,7 @@ export default function ServiceBookingScreen() {
       <Text style={styles.stepDescription}>
         When would you like to schedule your appointment?
       </Text>
-      
+
       <Card style={styles.calendarCard}>
         <Calendar
           style={styles.calendar}
@@ -428,8 +428,8 @@ export default function ServiceBookingScreen() {
 
       {/* Progress Bar */}
       <View style={styles.progressContainer}>
-        <ProgressBar 
-          progress={progress} 
+        <ProgressBar
+          progress={progress}
           color={theme.colors.primary}
           style={styles.progressBar}
         />

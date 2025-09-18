@@ -1,4 +1,4 @@
-// app/mechanic-profile.tsx - Complete Airbnb-inspired mechanic profile
+// app/mechanic-profile.tsx - Complete Theme-inspired mechanic profile
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -281,8 +281,8 @@ export default function MechanicProfileScreen() {
         ? mechanic.services
         : mechanic.services?.filter((s: any) => s.category === selectedServiceCategory);
 
-    const AirbnbCard = ({ children, style = {}, shadow = 'soft' }: any) => (
-        <View style={[styles.airbnbCard, theme.shadows[shadow], style]}>
+    const ThemeCard = ({ children, style = {}, shadow = 'soft' }: any) => (
+        <View style={[styles.themeCard, theme.shadows[shadow], style]}>
             {children}
         </View>
     );
@@ -417,7 +417,7 @@ export default function MechanicProfileScreen() {
                 </View>
 
                 {/* Main Info Card */}
-                <AirbnbCard style={styles.mainInfoCard} shadow="medium">
+                <ThemeCard style={styles.mainInfoCard} shadow="medium">
                     <View style={styles.mechanicHeader}>
                         <View style={styles.mechanicTitleSection}>
                             <Text style={styles.mechanicName}>{mechanic.name}</Text>
@@ -461,7 +461,7 @@ export default function MechanicProfileScreen() {
                     )}
 
                     <Text style={styles.description}>{mechanic.description}</Text>
-                </AirbnbCard>
+                </ThemeCard>
 
                 {/* Quick Contact Actions */}
                 <View style={styles.quickActionsContainer}>
@@ -487,7 +487,7 @@ export default function MechanicProfileScreen() {
                 </View>
 
                 {/* Features & Amenities */}
-                <AirbnbCard style={styles.sectionCard}>
+                <ThemeCard style={styles.sectionCard}>
                     <Text style={styles.sectionTitle}>What this place offers</Text>
 
                     <View style={styles.featuresGrid}>
@@ -498,10 +498,10 @@ export default function MechanicProfileScreen() {
                             </View>
                         ))}
                     </View>
-                </AirbnbCard>
+                </ThemeCard>
 
                 {/* Services & Pricing */}
-                <AirbnbCard style={styles.sectionCard}>
+                <ThemeCard style={styles.sectionCard}>
                     <View style={styles.servicesHeader}>
                         <Text style={styles.sectionTitle}>Services & Pricing</Text>
                         <Text style={styles.servicesSubtitle}>Professional automotive services</Text>
@@ -537,10 +537,10 @@ export default function MechanicProfileScreen() {
                         scrollEnabled={false}
                         ItemSeparatorComponent={() => <Divider style={styles.serviceDivider} />}
                     />
-                </AirbnbCard>
+                </ThemeCard>
 
                 {/* Reviews Section */}
-                <AirbnbCard style={styles.sectionCard}>
+                <ThemeCard style={styles.sectionCard}>
                     <View style={styles.reviewsHeader}>
                         <View style={styles.reviewsHeaderMain}>
                             <Text style={styles.sectionTitle}>Reviews</Text>
@@ -575,10 +575,10 @@ export default function MechanicProfileScreen() {
                             />
                         </TouchableOpacity>
                     )}
-                </AirbnbCard>
+                </ThemeCard>
 
                 {/* Gallery */}
-                <AirbnbCard style={styles.sectionCard}>
+                <ThemeCard style={styles.sectionCard}>
                     <Text style={styles.sectionTitle}>Photo Gallery</Text>
                     <FlatList
                         data={mechanic.gallery}
@@ -588,10 +588,10 @@ export default function MechanicProfileScreen() {
                         showsHorizontalScrollIndicator={false}
                         contentContainerStyle={styles.galleryList}
                     />
-                </AirbnbCard>
+                </ThemeCard>
 
                 {/* Contact Information */}
-                <AirbnbCard style={styles.sectionCard}>
+                <ThemeCard style={styles.sectionCard}>
                     <Text style={styles.sectionTitle}>Contact & Location</Text>
 
                     <View style={styles.contactList}>
@@ -630,7 +630,7 @@ export default function MechanicProfileScreen() {
                             </View>
                         </View>
                     </View>
-                </AirbnbCard>
+                </ThemeCard>
 
                 {/* Bottom Spacing */}
                 <View style={styles.bottomSpacing} />
@@ -698,7 +698,7 @@ const styles = StyleSheet.create({
     },
 
     // Card Base
-    airbnbCard: {
+    themeCard: {
         backgroundColor: theme.colors.card,
         borderRadius: theme.borderRadius.xl,
         borderWidth: 1,

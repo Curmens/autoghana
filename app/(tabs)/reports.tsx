@@ -1,5 +1,4 @@
 // app/(tabs)/reports.tsx
-import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
     Dimensions,
@@ -9,10 +8,10 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { FAB, Searchbar } from 'react-native-paper';
+import { Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { airbnbComponents, theme } from './theme';
+import { theme, themeComponents } from './theme';
 
 const { width } = Dimensions.get('window');
 
@@ -132,8 +131,16 @@ export default function ReportsScreen() {
         ));
     };
 
-    const AirbnbCard = ({ children, style = {}, shadow = 'soft' }: any) => (
-        <View style={[styles.airbnbCard, theme.shadows[shadow], style]}>
+    const ThemeCard = ({
+        children,
+        style = {},
+        shadow = 'soft',
+    }: {
+        children: React.ReactNode;
+        style?: object;
+        shadow?: keyof typeof theme.shadows;
+    }) => (
+        <View style={[styles.themeCard, theme.shadows[shadow], style]}>
             {children}
         </View>
     );
@@ -162,7 +169,7 @@ export default function ReportsScreen() {
 
     const ReportCard = ({ report }: { report: Report }) => (
         <TouchableOpacity style={styles.reportContainer} activeOpacity={0.95}>
-            <AirbnbCard style={styles.reportCard}>
+            <ThemeCard style={styles.reportCard}>
                 <View style={styles.reportHeader}>
                     <View style={[styles.reportIconContainer, { backgroundColor: `${getReportColor(report.type)}15` }]}>
                         <Icon
@@ -207,7 +214,7 @@ export default function ReportsScreen() {
                         <Text style={styles.verifyButtonText}>Verify</Text>
                     </TouchableOpacity>
                 </View>
-            </AirbnbCard>
+            </ThemeCard>
         </TouchableOpacity>
     );
 
@@ -268,12 +275,12 @@ export default function ReportsScreen() {
             />
 
             {/* Floating Action Button */}
-            <FAB
+            {/* <FAB
                 style={styles.fab}
                 icon="add"
                 label="Report"
-                onPress={() => router.push('/create-report')}
-            />
+                onPress={() => router.push('/(tabs)/create-report')}
+            /> */}
         </SafeAreaView>
     );
 }
@@ -310,7 +317,7 @@ const styles = StyleSheet.create({
         color: theme.colors.textSecondary,
     },
     mapButton: {
-        ...airbnbComponents.button.ghost,
+        ...themeComponents.button.ghost,
         width: 48,
         height: 48,
         borderRadius: theme.borderRadius.round,
@@ -328,7 +335,7 @@ const styles = StyleSheet.create({
     },
 
     // Card Base
-    airbnbCard: {
+    themeCard: {
         backgroundColor: theme.colors.card,
         borderRadius: theme.borderRadius.xl,
         borderWidth: 1,
@@ -435,7 +442,7 @@ const styles = StyleSheet.create({
     reportDescription: {
         fontSize: theme.typography?.sizes.body,
         color: theme.colors.textPrimary,
-        lineHeight: theme.typography?.lineHeights.normal * theme.typography?.sizes.body,
+        lineHeight: (theme.typography?.lineHeights.normal ?? 1.5) * (theme.typography?.sizes.body ?? 16),
         marginBottom: theme.spacing.lg,
     },
     reportFooter: {

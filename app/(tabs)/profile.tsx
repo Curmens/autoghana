@@ -1,7 +1,7 @@
-// app/(tabs)/profile.tsx - Updated with Airbnb theme
+// app/(tabs)/profile.tsx - Updated with Theme theme
 import { router } from 'expo-router';
 import React from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -18,6 +18,7 @@ interface ProfileMenuItem {
 }
 
 export default function ProfileScreen() {
+
     const user = {
         name: 'Kofi Asante',
         email: 'kofi.asante@example.com',
@@ -121,13 +122,34 @@ export default function ProfileScreen() {
             id: 'logout',
             title: 'Log Out',
             icon: 'logout',
-            action: () => console.log('Logout'),
-            type: 'danger',
-        },
+            action: async () => {
+                Alert.alert(
+                    'Sign Out',
+                    'Are you sure you want to sign out?',
+                    [
+                        { text: 'Cancel', style: 'cancel' },
+                        {
+                            text: 'Sign Out',
+                            style: 'destructive',
+                            onPress: async () => {
+                                await logout();
+                            }
+                        }
+                    ]
+                );
+            },
+            type: 'danger' as const,
+        }
     ];
 
-    const AirbnbCard = ({ children, style = {}, shadow = 'soft' }: any) => (
-        <View style={[styles.airbnbCard, theme.shadows[shadow], style]}>
+    type ShadowType = keyof typeof theme.shadows;
+
+    const ThemeCard = ({
+        children,
+        style = {},
+        shadow = 'soft',
+    }: { children: React.ReactNode; style?: object; shadow?: ShadowType }) => (
+        <View style={[styles.themeCard, theme.shadows[shadow], style]}>
             {children}
         </View>
     );
@@ -135,7 +157,7 @@ export default function ProfileScreen() {
     const MenuSection = ({ title, items }: { title?: string; items: ProfileMenuItem[] }) => (
         <View style={styles.menuSection}>
             {title && <Text style={styles.sectionTitle}>{title}</Text>}
-            <AirbnbCard>
+            <ThemeCard>
                 {items.map((item, index) => (
                     <View key={item.id}>
                         <TouchableOpacity
@@ -153,7 +175,7 @@ export default function ProfileScreen() {
                                     color={item.type === 'danger' ? theme.colors.error : theme.colors.primary}
                                 />
                             </View>
-                            
+
                             <View style={styles.menuContent}>
                                 <Text style={[
                                     styles.menuTitle,
@@ -165,7 +187,7 @@ export default function ProfileScreen() {
                                     <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
                                 )}
                             </View>
-                            
+
                             {item.showArrow && (
                                 <Icon
                                     name="chevron-right"
@@ -174,11 +196,11 @@ export default function ProfileScreen() {
                                 />
                             )}
                         </TouchableOpacity>
-                        
+
                         {index < items.length - 1 && <View style={styles.menuDivider} />}
                     </View>
                 ))}
-            </AirbnbCard>
+            </ThemeCard>
         </View>
     );
 
@@ -194,46 +216,46 @@ export default function ProfileScreen() {
                 </View>
 
                 {/* Profile Card */}
-                <AirbnbCard style={styles.profileCard} shadow="medium">
+                <ThemeCard style={styles.profileCard} shadow="medium">
                     <View style={styles.profileHeader}>
                         <Avatar.Image
                             size={80}
                             source={{ uri: user.profileImage }}
                             style={styles.avatar}
                         />
-                        
+
                         <View style={styles.profileInfo}>
                             <Text style={styles.userName}>{user.name}</Text>
                             <Text style={styles.userEmail}>{user.email}</Text>
                             <Text style={styles.memberSince}>{user.memberSince}</Text>
                         </View>
-                        
+
                         <TouchableOpacity style={styles.editButton}>
                             <Icon name="edit" size={20} color={theme.colors.primary} />
                         </TouchableOpacity>
                     </View>
-                    
+
                     <View style={styles.statsContainer}>
                         <View style={styles.statItem}>
                             <Text style={styles.statValue}>{user.stats.vehicles}</Text>
                             <Text style={styles.statLabel}>Vehicles</Text>
                         </View>
-                        
+
                         <View style={styles.statDivider} />
-                        
+
                         <View style={styles.statItem}>
                             <Text style={styles.statValue}>{user.stats.services}</Text>
                             <Text style={styles.statLabel}>Services</Text>
                         </View>
-                        
+
                         <View style={styles.statDivider} />
-                        
+
                         <View style={styles.statItem}>
                             <Text style={styles.statValue}>{user.stats.reviews}</Text>
                             <Text style={styles.statLabel}>Reviews</Text>
                         </View>
                     </View>
-                </AirbnbCard>
+                </ThemeCard>
 
                 {/* Quick Actions */}
                 <View style={styles.quickActions}>
@@ -244,7 +266,7 @@ export default function ProfileScreen() {
                         <Icon name="build" size={24} color={theme.colors.primary} />
                         <Text style={styles.quickActionText}>Book Service</Text>
                     </TouchableOpacity>
-                    
+
                     <TouchableOpacity
                         style={styles.quickActionCard}
                         onPress={() => router.push('/(tabs)/marketplace')}
@@ -252,7 +274,7 @@ export default function ProfileScreen() {
                         <Icon name="shopping-cart" size={24} color={theme.colors.primary} />
                         <Text style={styles.quickActionText}>Shop Parts</Text>
                     </TouchableOpacity>
-                    
+
                     <TouchableOpacity
                         style={styles.quickActionCard}
                         onPress={() => router.push('/(tabs)/reports')}
@@ -264,11 +286,11 @@ export default function ProfileScreen() {
 
                 {/* Menu Sections */}
                 <MenuSection items={profileMenuItems} />
-                
+
                 <MenuSection title="Settings" items={settingsMenuItems} />
-                
+
                 <MenuSection title="Legal & Account" items={accountMenuItems} />
-                
+
                 {/* App Version */}
                 <View style={styles.versionContainer}>
                     <Text style={styles.versionText}>AutoGhana v1.0.0</Text>
@@ -286,7 +308,7 @@ const styles = StyleSheet.create({
     scrollView: {
         flex: 1,
     },
-    
+
     // Header
     header: {
         flexDirection: 'row',
@@ -305,7 +327,7 @@ const styles = StyleSheet.create({
     },
 
     // Card Base
-    airbnbCard: {
+    themeCard: {
         backgroundColor: theme.colors.card,
         borderRadius: theme.borderRadius.xl,
         borderWidth: 1,
@@ -465,3 +487,12 @@ const styles = StyleSheet.create({
         color: theme.colors.textSecondary,
     },
 });
+
+async function logout() {
+    // Clear user session/token here if using async storage or secure store
+    // For example, using AsyncStorage:
+    // await AsyncStorage.removeItem('userToken');
+
+    // Navigate to login or welcome screen
+    router.replace('/auth/login');
+}

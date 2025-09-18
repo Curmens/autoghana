@@ -1,88 +1,66 @@
-// app/(tabs)/_layout.tsx
 import { Tabs } from 'expo-router';
 import React from 'react';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { theme } from './theme';
+import { ModernTabBar } from '../components/ModernTabBar';
 
 export default function TabLayout() {
   return (
     <Tabs
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName: string;
-
-          if (route.name === 'index') {
-            iconName = 'home';
-          } else if (route.name === 'my-garage') {
-            iconName = 'directions-car';
-          } else if (route.name === 'marketplace') {
-            iconName = 'store';
-          } else if (route.name === 'reports') {
-            iconName = 'place';
-          } else if (route.name === 'profile') {
-            iconName = 'person';
-          } else {
-            iconName = 'help';
-          }
-
-          return <Icon name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: '#6B7280',
-        tabBarStyle: {
-          backgroundColor: 'white',
-          borderTopWidth: 1,
-          borderTopColor: '#E5E7EB',
-          paddingBottom: 5,
-          paddingTop: 5,
-          height: 60,
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '500',
-        },
+      tabBar={(props) => <ModernTabBar {...props} />}
+      screenOptions={{
         headerShown: false,
-      })}
+        // Hide default tab bar since we're using custom one
+        tabBarStyle: { display: 'none' },
+      }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          href: '/'
+          href: '/',
         }}
       />
       <Tabs.Screen
         name="my-garage"
-        options={{ title: 'My Garage' }}
+        options={{
+          title: 'My Garage',
+        }}
       />
       <Tabs.Screen
         name="marketplace"
-        options={{ title: 'Marketplace' }}
+        options={{
+          title: 'Marketplace',
+        }}
       />
       <Tabs.Screen
         name="reports"
-        options={{ title: 'Reports' }}
+        options={{
+          title: 'Reports',
+        }}
       />
       <Tabs.Screen
         name="profile"
-        options={{ title: 'Profile' }}
+        options={{
+          title: 'Profile',
+        }}
       />
+      
+      {/* Hidden screens */}
       <Tabs.Screen
         name="explore"
         options={{
-          href: null, // Hide from tab bar
+          href: null,
         }}
       />
       <Tabs.Screen
         name="home"
         options={{
-          href: null, // Hide from tab bar
+          href: null,
         }}
       />
       <Tabs.Screen
         name="theme"
         options={{
-          href: null, // Hide from tab bar
+          href: null,
         }}
       />
     </Tabs>

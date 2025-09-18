@@ -33,5 +33,23 @@ allprojects {
   }
 }
 
+android {
+    signingConfigs {
+        release {
+            storeFile file('my-upload-key.keystore')
+            storePassword 'your-password'
+            keyAlias 'my-key-alias'
+            keyPassword 'your-password'
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+}
+
 apply plugin: "expo-root-project"
 apply plugin: "com.facebook.react.rootproject"

@@ -1,4 +1,4 @@
-// app/diagnostics-upload.tsx - Updated with Airbnb theme
+// app/diagnostics-upload.tsx - Updated with Theme theme
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -34,8 +34,8 @@ const uploadOptions = [
 export default function DiagnosticsUploadScreen() {
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
-    const AirbnbCard = ({ children, style = {}, shadow = 'soft' }: any) => (
-        <View style={[styles.airbnbCard, theme.shadows[shadow], style]}>
+    const ThemeCard = ({ children, style = {}, shadow = 'soft' }: any) => (
+        <View style={[styles.themeCard, theme.shadows[shadow], style]}>
             {children}
         </View>
     );
@@ -46,7 +46,7 @@ export default function DiagnosticsUploadScreen() {
             onPress={() => setSelectedOption(option.id)}
             activeOpacity={0.95}
         >
-            <AirbnbCard style={[
+            <ThemeCard style={[
                 styles.optionCard,
                 selectedOption === option.id && styles.optionCardSelected
             ]}>
@@ -67,7 +67,7 @@ export default function DiagnosticsUploadScreen() {
                         <View style={styles.radioButtonInner} />
                     )}
                 </View>
-            </AirbnbCard>
+            </ThemeCard>
         </TouchableOpacity>
     );
 
@@ -81,7 +81,7 @@ export default function DiagnosticsUploadScreen() {
                     
                     <Text style={styles.title}>Upload Diagnostic Report</Text>
                     <Text style={styles.subtitle}>
-                        Share your vehicle's diagnostic information to get better service recommendations and track your car's health over time.
+                        Share your vehicle&apos;s diagnostic information to get better service recommendations and track your car's health over time.
                     </Text>
                 </View>
 
@@ -93,7 +93,7 @@ export default function DiagnosticsUploadScreen() {
                     ))}
                 </View>
 
-                <AirbnbCard style={styles.infoCard}>
+                <ThemeCard style={styles.infoCard}>
                     <View style={styles.infoHeader}>
                         <Icon name="info" size={20} color={theme.colors.primary} />
                         <Text style={styles.infoTitle}>What we accept</Text>
@@ -105,7 +105,7 @@ export default function DiagnosticsUploadScreen() {
                         <Text style={styles.infoItem}>• Mechanic inspection reports</Text>
                         <Text style={styles.infoItem}>• Service history documents</Text>
                     </View>
-                </AirbnbCard>
+                </ThemeCard>
 
                 <View style={styles.actions}>
                     <Button
@@ -172,12 +172,12 @@ const styles = StyleSheet.create({
         fontSize: theme.typography?.sizes.bodyLarge,
         color: theme.colors.textSecondary,
         textAlign: 'center',
-        lineHeight: theme.typography?.lineHeights.normal * theme.typography?.sizes.bodyLarge,
+        lineHeight: (theme.typography?.lineHeights.normal ?? 1.2) * theme.typography?.sizes.bodyLarge,
         paddingHorizontal: theme.spacing.md,
     },
 
     // Card Base
-    airbnbCard: {
+    themeCard: {
         backgroundColor: theme.colors.card,
         borderRadius: theme.borderRadius.xl,
         borderWidth: 1,

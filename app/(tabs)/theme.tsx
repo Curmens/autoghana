@@ -1,14 +1,14 @@
-// app/(tabs)/theme.tsx - Unified Airbnb Theme for AutoGhana
+// app/(tabs)/theme.tsx - Unified Theme Theme for AutoGhana
 import { TextStyle, ViewStyle } from 'react-native';
 import { DefaultTheme } from 'react-native-paper';
 
-// Airbnb Design Tokens - Official Color Palette
-export const airbnbTokens = {
+// Theme Design Tokens - Official Color Palette
+export const themeTokens = {
   colors: {
-    // Airbnb Brand Colors
-    rausch: '#FF5A5F', // Airbnb Red (Primary)
-    babu: '#00A699', // Airbnb Teal (Secondary)
-    arches: '#FC642D', // Airbnb Orange (Accent)
+    // Theme Brand Colors
+    rausch: '#FF5A5F', // Theme Red (Primary)
+    babu: '#00A699', // Theme Teal (Secondary)
+    arches: '#FC642D', // Theme Orange (Accent)
     hof: '#484848', // Dark Gray
     foggy: '#767676', // Medium Gray
     light: '#B0B0B0', // Light Gray
@@ -140,7 +140,7 @@ export interface AppTheme {
     white: string;
     black: string;
     
-    // Extended Airbnb colors
+    // Extended Theme colors
     rausch?: string;
     babu?: string;
     arches?: string;
@@ -199,100 +199,100 @@ export interface AppTheme {
   };
   
   typography?: {
-    sizes: typeof airbnbTokens.typography.sizes;
-    weights: typeof airbnbTokens.typography.weights;
-    lineHeights: typeof airbnbTokens.typography.lineHeights;
+    sizes: typeof themeTokens.typography.sizes;
+    weights: typeof themeTokens.typography.weights;
+    lineHeights: typeof themeTokens.typography.lineHeights;
   };
 }
 
-// Main theme using Airbnb tokens
+// Main theme using Theme tokens
 export const theme: AppTheme = {
   colors: {
-    // Map Airbnb colors to standard theme colors
-    primary: airbnbTokens.colors.rausch, // #FF5A5F
-    secondary: airbnbTokens.colors.babu, // #00A699
-    accent: airbnbTokens.colors.arches, // #FC642D
+    // Map Theme colors to standard theme colors
+    primary: "#074E00", //rgb(7, 78, 0)
+    secondary: themeTokens.colors.babu, // #00A699
+    accent: themeTokens.colors.arches, // #FC642D
     
     // Status colors
-    success: airbnbTokens.colors.success, // #008A05
-    warning: airbnbTokens.colors.warning, // #FFB400
-    error: airbnbTokens.colors.error, // #FF5A5F
+    success: themeTokens.colors.success, // #008A05
+    warning: themeTokens.colors.warning, // #FFB400
+    error: themeTokens.colors.error, // #FF5A5F
     
     // Background colors
-    background: airbnbTokens.colors.white, // #FFFFFF
-    surface: airbnbTokens.colors.white, // #FFFFFF
-    card: airbnbTokens.colors.white, // #FFFFFF
+    background: themeTokens.colors.white, // #FFFFFF
+    surface: themeTokens.colors.white, // #FFFFFF
+    card: themeTokens.colors.white, // #FFFFFF
     
     // Text colors
-    text: airbnbTokens.colors.textPrimary, // #222222
-    textSecondary: airbnbTokens.colors.textSecondary, // #717171
-    textTertiary: airbnbTokens.colors.textTertiary, // #B0B0B0
-    placeholder: airbnbTokens.colors.textTertiary, // #B0B0B0
+    text: themeTokens.colors.textPrimary, // #222222
+    textSecondary: themeTokens.colors.textSecondary, // #717171
+    textTertiary: themeTokens.colors.textTertiary, // #B0B0B0
+    placeholder: themeTokens.colors.textTertiary, // #B0B0B0
     
     // Border colors
-    border: airbnbTokens.colors.lighter, // #D8D8D8
-    divider: airbnbTokens.colors.lighter, // #D8D8D8
+    border: themeTokens.colors.lighter, // #D8D8D8
+    divider: themeTokens.colors.lighter, // #D8D8D8
     
     // Basic colors
-    white: airbnbTokens.colors.white, // #FFFFFF
-    black: airbnbTokens.colors.black, // #222222
+    white: themeTokens.colors.white, // #FFFFFF
+    black: themeTokens.colors.black, // #222222
     
-    // Extended Airbnb colors for direct access
-    rausch: airbnbTokens.colors.rausch,
-    babu: airbnbTokens.colors.babu,
-    arches: airbnbTokens.colors.arches,
-    hof: airbnbTokens.colors.hof,
-    foggy: airbnbTokens.colors.foggy,
-    light: airbnbTokens.colors.light,
-    lighter: airbnbTokens.colors.lighter,
-    lightest: airbnbTokens.colors.lightest,
+    // Extended Theme colors for direct access
+    rausch: themeTokens.colors.rausch,
+    babu: themeTokens.colors.babu,
+    arches: themeTokens.colors.arches,
+    hof: themeTokens.colors.hof,
+    foggy: themeTokens.colors.foggy,
+    light: themeTokens.colors.light,
+    lighter: themeTokens.colors.lighter,
+    lightest: themeTokens.colors.lightest,
   },
   
   spacing: {
-    xs: airbnbTokens.spacing.xs, // 4
-    sm: airbnbTokens.spacing.sm, // 8
-    md: airbnbTokens.spacing.md, // 12
-    lg: airbnbTokens.spacing.lg, // 16
-    xl: airbnbTokens.spacing.xl, // 24
-    xxl: airbnbTokens.spacing.xxl, // 32
-    xxxl: airbnbTokens.spacing.xxxl, // 48
+    xs: themeTokens.spacing.xs, // 4
+    sm: themeTokens.spacing.sm, // 8
+    md: themeTokens.spacing.md, // 12
+    lg: themeTokens.spacing.lg, // 16
+    xl: themeTokens.spacing.xl, // 24
+    xxl: themeTokens.spacing.xxl, // 32
+    xxxl: themeTokens.spacing.xxxl, // 48
   },
   
   borderRadius: {
-    sm: airbnbTokens.borderRadius.sm, // 4
-    md: airbnbTokens.borderRadius.md, // 8
-    lg: airbnbTokens.borderRadius.lg, // 12
-    xl: airbnbTokens.borderRadius.xl, // 16
-    xxl: airbnbTokens.borderRadius.xxl, // 24
-    round: airbnbTokens.borderRadius.round, // 50
+    sm: themeTokens.borderRadius.sm, // 4
+    md: themeTokens.borderRadius.md, // 8
+    lg: themeTokens.borderRadius.lg, // 12
+    xl: themeTokens.borderRadius.xl, // 16
+    xxl: themeTokens.borderRadius.xxl, // 24
+    round: themeTokens.borderRadius.round, // 50
   },
   
   fontSize: {
-    xs: airbnbTokens.typography.sizes.caption, // 12
-    sm: airbnbTokens.typography.sizes.body, // 14
-    md: airbnbTokens.typography.sizes.bodyLarge, // 16
-    lg: airbnbTokens.typography.sizes.title, // 18
-    xl: airbnbTokens.typography.sizes.titleLarge, // 22
-    xxl: airbnbTokens.typography.sizes.heading, // 26
-    xxxl: airbnbTokens.typography.sizes.display, // 32
+    xs: themeTokens.typography.sizes.caption, // 12
+    sm: themeTokens.typography.sizes.body, // 14
+    md: themeTokens.typography.sizes.bodyLarge, // 16
+    lg: themeTokens.typography.sizes.title, // 18
+    xl: themeTokens.typography.sizes.titleLarge, // 22
+    xxl: themeTokens.typography.sizes.heading, // 26
+    xxxl: themeTokens.typography.sizes.display, // 32
   },
   
   fontWeight: {
-    normal: airbnbTokens.typography.weights.regular, // '400'
-    medium: airbnbTokens.typography.weights.medium, // '500'
-    semibold: airbnbTokens.typography.weights.semibold, // '600'
-    bold: airbnbTokens.typography.weights.bold, // '700'
+    normal: themeTokens.typography.weights.regular, // '400'
+    medium: themeTokens.typography.weights.medium, // '500'
+    semibold: themeTokens.typography.weights.semibold, // '600'
+    bold: themeTokens.typography.weights.bold, // '700'
   },
   
   shadows: {
-    small: airbnbTokens.shadows.subtle,
-    medium: airbnbTokens.shadows.medium,
-    large: airbnbTokens.shadows.large,
-    subtle: airbnbTokens.shadows.subtle,
-    soft: airbnbTokens.shadows.soft,
+    small: themeTokens.shadows.subtle,
+    medium: themeTokens.shadows.medium,
+    large: themeTokens.shadows.large,
+    subtle: themeTokens.shadows.subtle,
+    soft: themeTokens.shadows.soft,
   },
   
-  typography: airbnbTokens.typography,
+  typography: themeTokens.typography,
 };
 
 // React Native Paper theme configuration
@@ -300,8 +300,8 @@ export const paperTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: theme.colors.primary, // Airbnb Red
-    secondary: theme.colors.secondary, // Airbnb Teal
+    primary: theme.colors.primary, // Theme Red
+    secondary: theme.colors.secondary, // Theme Teal
     surface: theme.colors.surface,
     background: theme.colors.background,
     text: theme.colors.text,
@@ -309,29 +309,29 @@ export const paperTheme = {
     error: theme.colors.error,
     onSurface: theme.colors.text,
     onBackground: theme.colors.text,
-    accent: theme.colors.accent, // Airbnb Orange
+    accent: theme.colors.accent, // Theme Orange
   },
 };
 
-// Utility functions for easy access to Airbnb tokens
-export const getAirbnbColor = (colorName: keyof typeof airbnbTokens.colors) => 
-  airbnbTokens.colors[colorName];
+// Utility functions for easy access to Theme tokens
+export const getThemeColor = (colorName: keyof typeof themeTokens.colors) => 
+  themeTokens.colors[colorName];
 
-export const getAirbnbSpacing = (...values: (keyof typeof airbnbTokens.spacing)[]) => 
-  values.map(value => airbnbTokens.spacing[value]);
+export const getThemeSpacing = (...values: (keyof typeof themeTokens.spacing)[]) => 
+  values.map(value => themeTokens.spacing[value]);
 
-export const getAirbnbRadius = (radius: keyof typeof airbnbTokens.borderRadius) => 
-  airbnbTokens.borderRadius[radius];
+export const getThemeRadius = (radius: keyof typeof themeTokens.borderRadius) => 
+  themeTokens.borderRadius[radius];
 
-export const getAirbnbShadow = (shadowName: keyof typeof airbnbTokens.shadows) => 
-  airbnbTokens.shadows[shadowName];
+export const getThemeShadow = (shadowName: keyof typeof themeTokens.shadows) => 
+  themeTokens.shadows[shadowName];
 
-// Component style helpers using Airbnb tokens
-export const airbnbComponents = {
+// Component style helpers using Theme tokens
+export const themeComponents = {
   // Button styles
   button: {
     primary: {
-      backgroundColor: theme.colors.primary, // Airbnb Red
+      backgroundColor: theme.colors.primary, // Theme Red
       borderRadius: theme.borderRadius.md,
       paddingHorizontal: theme.spacing.xl,
       paddingVertical: theme.spacing.lg,
@@ -382,7 +382,7 @@ export const airbnbComponents = {
       backgroundColor: theme.colors.surface,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      borderRadius: theme.borderRadius.xxl, // Airbnb's rounded search style
+      borderRadius: theme.borderRadius.xxl, // Theme's rounded search style
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
     },
@@ -415,55 +415,55 @@ export const airbnbComponents = {
   },
 };
 
-// Typography helpers using Airbnb tokens
-export const airbnbTypography = {
+// Typography helpers using Theme tokens
+export const themeTypography = {
   display: {
     fontSize: theme.fontSize.xxxl,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
-    lineHeight: airbnbTokens.typography.lineHeights.tight * airbnbTokens.typography.sizes.display,
+    lineHeight: themeTokens.typography.lineHeights.tight * themeTokens.typography.sizes.display,
   },
   heading: {
     fontSize: theme.fontSize.xxl,
     fontWeight: theme.fontWeight.semibold,
     color: theme.colors.text,
-    lineHeight: airbnbTokens.typography.lineHeights.tight * airbnbTokens.typography.sizes.heading,
+    lineHeight: themeTokens.typography.lineHeights.tight * themeTokens.typography.sizes.heading,
   },
   titleLarge: {
     fontSize: theme.fontSize.xl,
     fontWeight: theme.fontWeight.semibold,
     color: theme.colors.text,
-    lineHeight: airbnbTokens.typography.lineHeights.normal * airbnbTokens.typography.sizes.titleLarge,
+    lineHeight: themeTokens.typography.lineHeights.normal * themeTokens.typography.sizes.titleLarge,
   },
   title: {
     fontSize: theme.fontSize.lg,
     fontWeight: theme.fontWeight.semibold,
     color: theme.colors.text,
-    lineHeight: airbnbTokens.typography.lineHeights.normal * airbnbTokens.typography.sizes.title,
+    lineHeight: themeTokens.typography.lineHeights.normal * themeTokens.typography.sizes.title,
   },
   bodyLarge: {
     fontSize: theme.fontSize.md,
     fontWeight: theme.fontWeight.normal,
     color: theme.colors.text,
-    lineHeight: airbnbTokens.typography.lineHeights.normal * airbnbTokens.typography.sizes.bodyLarge,
+    lineHeight: themeTokens.typography.lineHeights.normal * themeTokens.typography.sizes.bodyLarge,
   },
   body: {
     fontSize: theme.fontSize.sm,
     fontWeight: theme.fontWeight.normal,
     color: theme.colors.text,
-    lineHeight: airbnbTokens.typography.lineHeights.normal * airbnbTokens.typography.sizes.body,
+    lineHeight: themeTokens.typography.lineHeights.normal * themeTokens.typography.sizes.body,
   },
   bodyMuted: {
     fontSize: theme.fontSize.sm,
     fontWeight: theme.fontWeight.normal,
     color: theme.colors.textSecondary,
-    lineHeight: airbnbTokens.typography.lineHeights.normal * airbnbTokens.typography.sizes.body,
+    lineHeight: themeTokens.typography.lineHeights.normal * themeTokens.typography.sizes.body,
   },
   caption: {
     fontSize: theme.fontSize.xs,
     fontWeight: theme.fontWeight.normal,
     color: theme.colors.textSecondary,
-    lineHeight: airbnbTokens.typography.lineHeights.normal * airbnbTokens.typography.sizes.caption,
+    lineHeight: themeTokens.typography.lineHeights.normal * themeTokens.typography.sizes.caption,
   },
 };
 

@@ -1,15 +1,15 @@
-// app/(tabs)/index.tsx - AutoGhana Home Screen with Airbnb-Inspired Design
+// app/(tabs)/index.tsx - AutoGhana Home Screen with Theme-Inspired Design
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  Dimensions,
-  Image,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions,
+    Image,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { IconButton, Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,7 +18,7 @@ import { theme } from './theme';
 
 const { width } = Dimensions.get('window');
 
-export default function AirbnbHomeScreen() {
+export default function ThemeHomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const vehicle = {
@@ -100,10 +100,10 @@ export default function AirbnbHomeScreen() {
   ];
 
   type ShadowType = keyof typeof theme.shadows;
-  const AirbnbCard = ({
+  const ThemeCard = ({
     children,
     style = {
-      borderWidth: 0,
+      borderWidth: 10,
     },
     shadow = 'soft',
   }: {
@@ -111,7 +111,7 @@ export default function AirbnbHomeScreen() {
     style?: object;
     shadow?: ShadowType;
   }) => (
-    <View style={[styles.airbnbCard, theme.shadows[shadow], style]}>
+    <View style={[styles.themeCard, style]}>
       {children}
     </View>
   );
@@ -143,13 +143,13 @@ export default function AirbnbHomeScreen() {
       onPress={() => router.push(`/reports`)}
       activeOpacity={0.9}
     >
-      <AirbnbCard style={styles.quickActionCard}>
+      <ThemeCard style={styles.quickActionCard}>
         <Image source={{ uri: action.image }} style={styles.quickActionImage} />
         <View style={styles.quickActionContent}>
           <Text style={styles.quickActionLabel}>{action.label}</Text>
           <Text style={styles.quickActionSubtitle}>{action.subtitle}</Text>
         </View>
-      </AirbnbCard>
+      </ThemeCard>
     </TouchableOpacity>
   );
 
@@ -159,7 +159,7 @@ export default function AirbnbHomeScreen() {
       onPress={() => router.push(`/mechanic-profile?mechanicId=${service.id}`)}
       activeOpacity={0.95}
     >
-      <AirbnbCard style={styles.serviceCard}>
+      <ThemeCard style={styles.serviceCard}>
         <View style={styles.serviceImageContainer}>
           <Image source={{ uri: service.image }} style={styles.serviceImage} />
           <View style={styles.serviceBadges}>
@@ -205,7 +205,7 @@ export default function AirbnbHomeScreen() {
             <Text style={styles.serviceResponse}>{service.responseTime}</Text>
           </View>
         </View>
-      </AirbnbCard>
+      </ThemeCard>
     </TouchableOpacity>
   );
 
@@ -218,7 +218,7 @@ export default function AirbnbHomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Airbnb-style Header */}
+        {/* Theme-style Header */}
         <View style={styles.header}>
           <View style={styles.headerTop}>
             <View style={styles.userSection}>
@@ -261,7 +261,7 @@ export default function AirbnbHomeScreen() {
             onPress={() => router.push('/vehicle-detail')}
             activeOpacity={0.95}
           >
-            <AirbnbCard style={styles.vehicleCard} shadow="medium">
+            <ThemeCard style={styles.vehicleCard} shadow="medium">
               <View style={styles.vehicleHeader}>
                 <View style={styles.vehicleMainInfo}>
                   <Text style={styles.vehicleTitle}>Your Vehicle</Text>
@@ -290,11 +290,11 @@ export default function AirbnbHomeScreen() {
               </View>
 
               <ServiceProgressIndicator progress={vehicle.serviceProgress} />
-            </AirbnbCard>
+            </ThemeCard>
           </TouchableOpacity>
         </View>
 
-        {/* Quick Actions - Airbnb Grid Style */}
+        {/* Quick Actions - Theme Grid Style */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>What can we help you with?</Text>
           <View style={styles.quickActionsGrid}>
@@ -304,7 +304,7 @@ export default function AirbnbHomeScreen() {
           </View>
         </View>
 
-        {/* Featured Services - Airbnb Listing Style */}
+        {/* Featured Services - Theme Listing Style */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Featured auto services</Text>
@@ -398,12 +398,12 @@ const styles = StyleSheet.create({
   },
 
   // Card Base
-  airbnbCard: {
+  themeCard: {
     backgroundColor: theme.colors.card,
     borderRadius: theme.borderRadius.xl,
-    borderWidth: .8,
-    shadowOffset: { width: 0, height: 1 },
-    borderColor: theme.colors.lighter,
+    borderWidth: 2,
+    shadowOffset: { width: 0, height: 10 },
+    borderColor: theme.colors.lightest,
   },
 
   // Section Styles

@@ -1,4 +1,4 @@
-// app/vin-scanner.tsx - Updated with Airbnb theme
+// app/vin-scanner.tsx - Updated with Theme theme
 import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";

@@ -1,4 +1,4 @@
-// app/(tabs)/my-garage.tsx - Fixed with proper theme usage
+// app/(tabs)/my-garage.tsx
 import { router } from 'expo-router';
 import React from 'react';
 import {
@@ -12,9 +12,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Button, Card } from 'react-native-paper';
+import { Card, FAB } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from './theme';
 
 interface Vehicle {
@@ -22,6 +21,7 @@ interface Vehicle {
   name: string;
   plate: string;
   image: string;
+  vin: string;
 }
 
 interface MaintenanceItem {
@@ -34,16 +34,18 @@ interface MaintenanceItem {
 export default function MyGarageScreen() {
   const vehicles: Vehicle[] = [
     {
-      id: 'GT-1234-24',
-      name: 'Toyota Camry',
-      plate: 'GT 1234-24',
-      image: 'https://via.placeholder.com/200x120',
+      id: 'GW 50-22',
+      name: 'Audi A5',
+      plate: 'GW 50-22',
+      vin: 'WAUZZZ8T3JA123456',
+      image: 'https://images.unsplash.com/photo-1520050206274-a1ae44613e6d?q=80&w=1740',
     },
     {
       id: 'AS-5678-23',
       name: 'Ford Ranger',
-      plate: 'AS 5678-23',
-      image: 'https://via.placeholder.com/200x120',
+      plate: 'DV 5678-23',
+      vin: '1FTFW1E50JFC12345',
+      image: 'https://images.unsplash.com/photo-1605893477799-b99e3b8b93fe?q=80&w=1548',
     },
   ];
 
@@ -63,59 +65,44 @@ export default function MyGarageScreen() {
   ];
 
   const renderVehicleItem: ListRenderItem<Vehicle> = ({ item }) => (
-    <TouchableOpacity
-      style={styles.vehicleItem}
-      onPress={() => router.push(`/vehicle-detail?vehicleId=${item.id}`)}
-    >
+    <TouchableOpacity onPress={() => router.push(`/vehicle-detail?vehicleId=${item.id}`)}>
       <Card style={styles.vehicleCard}>
         <Image source={{ uri: item.image }} style={styles.vehicleImage} />
-        <Card.Content style={styles.vehicleContent}>
+        <View style={styles.vehicleOverlay} />
+        <View style={styles.vehicleCardContent}>
           <Text style={styles.vehicleName}>{item.name}</Text>
           <Text style={styles.vehiclePlate}>{item.plate}</Text>
-        </Card.Content>
+        </View>
       </Card>
     </TouchableOpacity>
   );
 
-  const renderMaintenanceItem: ListRenderItem<MaintenanceItem> = ({ item }) => (
-    <View style={styles.maintenanceItem}>
-      <View
-        style={[
-          styles.maintenanceIcon,
-          {
-            backgroundColor: item.status === 'Upcoming'
-              ? `${theme.colors.warning}20`
-              : `${theme.colors.primary}10`,
-          },
-        ]}
-      >
-        <Icon
-          name="build"
-          size={20}
-          color={item.status === 'Upcoming' ? theme.colors.warning : theme.colors.primary}
+  const renderMaintenanceItem: ListRenderItem<MaintenanceItem> = ({ item, index }) => (
+    <View style={styles.timelineRow}>
+      {/* Dot + line */}
+      <View style={styles.timelineIndicator}>
+        <View
+          style={[
+            styles.timelineDot,
+            {
+              backgroundColor:
+                item.status === 'Upcoming' ? theme.colors.warning : theme.colors.success,
+            },
+          ]}
         />
+        {index !== maintenanceTimeline.length - 1 && <View style={styles.timelineLine} />}
       </View>
-      <View style={styles.maintenanceInfo}>
+
+      {/* Info */}
+      <View style={styles.timelineContent}>
         <Text style={styles.maintenanceService}>{item.service}</Text>
         <Text style={styles.maintenanceDate}>{item.date}</Text>
-      </View>
-      <View
-        style={[
-          styles.statusBadge,
-          {
-            backgroundColor: item.status === 'Upcoming'
-              ? `${theme.colors.warning}20`
-              : `${theme.colors.success}20`,
-          },
-        ]}
-      >
         <Text
           style={[
             styles.statusText,
             {
-              color: item.status === 'Upcoming'
-                ? theme.colors.warning
-                : theme.colors.success,
+              color:
+                item.status === 'Upcoming' ? theme.colors.warning : theme.colors.success,
             },
           ]}
         >
@@ -129,22 +116,26 @@ export default function MyGarageScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={theme.colors.white} />
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>My Garage</Text>
-          <Button
-            mode="contained"
-            compact
-            icon="add"
-            onPress={() => router.push('/add-vehicle')}
-          >
-            Add Vehicle
-          </Button>
+          <View>
+            <Text style={styles.headerGreeting}>Hello 👋</Text>
+            <Text style={styles.headerTitle}>Your Garage</Text>
+          </View>
+          <Image
+            source={{ uri: 'https://i.pravatar.cc/100?img=3' }}
+            style={styles.avatar}
+          />
         </View>
 
-        {/* Vehicles List */}
+        {/* Vehicles */}
         <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Your Vehicles</Text>
           <FlatList
             data={vehicles}
             renderItem={renderVehicleItem}
@@ -158,18 +149,24 @@ export default function MyGarageScreen() {
         {/* Maintenance Timeline */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Maintenance Timeline</Text>
-          <Card style={styles.timelineCard}>
-            <Card.Content>
-              <FlatList
-                data={maintenanceTimeline}
-                renderItem={renderMaintenanceItem}
-                keyExtractor={(item) => item.id.toString()}
-                scrollEnabled={false}
-              />
-            </Card.Content>
-          </Card>
+          <View style={styles.timelineContainer}>
+            <FlatList
+              data={maintenanceTimeline}
+              renderItem={renderMaintenanceItem}
+              keyExtractor={(item) => item.id.toString()}
+              scrollEnabled={false}
+            />
+          </View>
         </View>
       </ScrollView>
+
+      {/* Floating Add Button */}
+      <FAB
+        icon="plus"
+        label="Add Vehicle"
+        style={styles.fab}
+        onPress={() => router.push('/add-vehicle')}
+      />
     </SafeAreaView>
   );
 }
@@ -180,83 +177,104 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   scrollView: {
-    flex: 1,
-    paddingHorizontal: theme.spacing.xl,
+    paddingHorizontal: theme.spacing.lg,
   },
   scrollContent: {
-    paddingBottom: theme.spacing.xxxl,
+    paddingBottom: theme.spacing.xxl,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: theme.spacing.md,
+    paddingVertical: theme.spacing.lg,
+  },
+  headerGreeting: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.textSecondary,
   },
   headerTitle: {
     fontSize: theme.fontSize.xxl,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
   },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
   section: {
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.xxl,
   },
   sectionTitle: {
     fontSize: theme.fontSize.lg,
     fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.text,
     marginBottom: theme.spacing.md,
+    color: theme.colors.text,
   },
   vehiclesList: {
     paddingRight: theme.spacing.md,
   },
-  vehicleItem: {
-    marginRight: theme.spacing.md,
-    width: 180,
-  },
   vehicleCard: {
+    width: 220,
+    height: 140,
+    marginRight: theme.spacing.md,
+    borderRadius: theme.borderRadius.lg,
+    overflow: 'hidden',
     backgroundColor: theme.colors.surface,
-    ...theme.shadows.small,
+    ...theme.shadows.medium,
   },
   vehicleImage: {
     width: '100%',
-    height: 120,
-    borderTopLeftRadius: theme.borderRadius.md,
-    borderTopRightRadius: theme.borderRadius.md,
+    height: '100%',
+    position: 'absolute',
   },
-  vehicleContent: {
-    padding: theme.spacing.sm,
+  vehicleOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  vehicleCardContent: {
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
   },
   vehicleName: {
-    fontSize: theme.fontSize.sm,
+    color: '#fff',
+    fontSize: theme.fontSize.md,
     fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.text,
   },
   vehiclePlate: {
+    color: '#eee',
     fontSize: theme.fontSize.xs,
-    color: theme.colors.textSecondary,
-    marginTop: theme.spacing.xs,
   },
-  timelineCard: {
+  timelineContainer: {
     backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
     ...theme.shadows.small,
   },
-  maintenanceItem: {
+  timelineRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: theme.spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    marginBottom: theme.spacing.lg,
   },
-  maintenanceIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: theme.borderRadius.md,
+  timelineIndicator: {
     alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: theme.spacing.md,
+    width: 30,
   },
-  maintenanceInfo: {
+  timelineDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginTop: 4,
+  },
+  timelineLine: {
+    width: 2,
     flex: 1,
+    backgroundColor: theme.colors.border,
+    marginTop: 4,
+  },
+  timelineContent: {
+    flex: 1,
+    paddingLeft: theme.spacing.md,
   },
   maintenanceService: {
     fontSize: theme.fontSize.sm,
@@ -266,15 +284,17 @@ const styles = StyleSheet.create({
   maintenanceDate: {
     fontSize: theme.fontSize.xs,
     color: theme.colors.textSecondary,
-    marginTop: theme.spacing.xs,
-  },
-  statusBadge: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.borderRadius.lg,
+    marginTop: 2,
   },
   statusText: {
+    marginTop: 4,
     fontSize: theme.fontSize.xs,
     fontWeight: theme.fontWeight.semibold,
+  },
+  fab: {
+    position: 'absolute',
+    right: theme.spacing.lg,
+    bottom: theme.spacing.lg,
+    backgroundColor: theme.colors.primary,
   },
 });

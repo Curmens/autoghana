@@ -2,14 +2,14 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Dimensions,
-    Image,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { IconButton, Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -75,8 +75,8 @@ export default function ThemeHomeScreen() {
       rating: 4.89,
       reviewCount: 127,
       price: '₵₵₵',
-      image: 'https://via.placeholder.com/300x200',
-      badges: ['Superhost', 'Verified'],
+      image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      badges: ['24hr Service', 'Verified'],
       specialty: 'Engine & Brake Specialist',
       availability: 'Available today',
       responseTime: 'Usually responds within an hour',
@@ -90,7 +90,7 @@ export default function ThemeHomeScreen() {
       rating: 4.76,
       reviewCount: 89,
       price: '₵₵',
-      image: 'https://via.placeholder.com/300x200',
+      image: 'https://images.unsplash.com/photo-1586335963805-7b603f62a048?q=80&w=770&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       badges: ['Verified'],
       specialty: 'AC & Diagnostics Expert',
       availability: 'Busy until 3 PM',
@@ -228,7 +228,7 @@ export default function ThemeHomeScreen() {
 
             <View style={styles.headerActions}>
               <IconButton
-                icon="notifications-none"
+                icon="bell-outline"
                 size={24}
                 iconColor={theme.colors.primary}
                 style={styles.headerButton}
@@ -295,14 +295,14 @@ export default function ThemeHomeScreen() {
         </View>
 
         {/* Quick Actions - Theme Grid Style */}
-        <View style={styles.section}>
+        {/* <View style={styles.section}>
           <Text style={styles.sectionTitle}>What can we help you with?</Text>
           <View style={styles.quickActionsGrid}>
             {quickActions.map((action) => (
               <QuickActionCard key={action.id} action={action} />
             ))}
           </View>
-        </View>
+        </View> */}
 
         {/* Featured Services - Theme Listing Style */}
         <View style={styles.section}>

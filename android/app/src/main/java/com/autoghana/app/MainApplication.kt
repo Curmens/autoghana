@@ -1,4 +1,4 @@
-package com.autoghana.app
+package com.gearsxxiv.app
 
 import android.app.Application
 import android.content.res.Configuration

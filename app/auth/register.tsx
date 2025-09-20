@@ -114,7 +114,7 @@ export default function RegisterScreen() {
                                 <Icon name="directions-car" size={32} color={theme.colors.primary} />
                             </View>
 
-                            <Text style={styles.title}>Join AutoGhana</Text>
+                            <Text style={styles.title}>Join GearsXXIV</Text>
                             <Text style={styles.subtitle}>
                                 Create your account to get started
                             </Text>

@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.autoghana.app'
+    namespace 'com.gearsxxiv.app'
     defaultConfig {
-        applicationId 'com.autoghana.app'
+        applicationId 'com.gearsxxiv.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

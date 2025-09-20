@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>AutoGhana</string>
+    <string>GearsXXIV</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -27,8 +27,8 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>autoghana</string>
-          <string>com.autoghana.app</string>
+          <string>gearsxxiv</string>
+          <string>com.gearsxxiv.app</string>
         </array>
       </dict>
     </array>
@@ -46,13 +46,13 @@
       <true/>
     </dict>
     <key>NSCameraUsageDescription</key>
-    <string>Allow AutoGhana to access your camera to scan VIN codes and capture diagnostic images.</string>
+    <string>Allow GearsXXIV to access your camera to scan VIN codes and capture diagnostic images.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Allow AutoGhana to use your location to find nearby mechanics and provide traffic updates.</string>
+    <string>Allow GearsXXIV to use your location to find nearby mechanics and provide traffic updates.</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your location</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Allow AutoGhana to use your location to find nearby services.</string>
+    <string>Allow GearsXXIV to use your location to find nearby services.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your microphone</string>
     <key>NSPhotoLibraryUsageDescription</key>

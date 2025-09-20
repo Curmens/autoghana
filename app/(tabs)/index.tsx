@@ -1,15 +1,15 @@
-// app/(tabs)/index.tsx - AutoGhana Home Screen with Theme-Inspired Design
+// app/(tabs)/index.tsx - GearsXXIV Home Screen with Theme-Inspired Design
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  Dimensions,
-  Image,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions,
+    Image,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { IconButton, Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -308,7 +308,7 @@ export default function ThemeHomeScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Featured auto services</Text>
-            <Text style={styles.sectionSubtitle}>Highly rated by the AutoGhana community</Text>
+            <Text style={styles.sectionSubtitle}>Highly rated by the GearsXXIV community</Text>
           </View>
 
           <View style={styles.featuredServices}>

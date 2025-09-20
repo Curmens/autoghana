@@ -1,4 +1,4 @@
-// app/(tabs)/theme.tsx - Unified Theme Theme for AutoGhana
+// app/(tabs)/theme.tsx - Unified Theme Theme for GearsXXIV
 import { TextStyle, ViewStyle } from 'react-native';
 import { DefaultTheme } from 'react-native-paper';
 

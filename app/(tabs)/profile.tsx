@@ -167,7 +167,7 @@ export default function ProfileScreen() {
 
                 {/* VERSION */}
                 <View style={styles.versionWrap}>
-                    <Text style={styles.versionText}>AutoGhana v1.0.0</Text>
+                    <Text style={styles.versionText}>GearsXXIV v1.0.0</Text>
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     verifiedText: { color: '#fff', fontSize: theme.fontSize.xs, fontWeight: theme.fontWeight.medium },
     emailText: { color: '#f2f2f2', fontSize: theme.fontSize.xs, marginTop: 2 },
     memberText: { color: '#eaeaea', fontSize: theme.fontSize.xs, marginTop: 2 },
-    
+
     // Buttons
     primaryBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: theme.colors.primary, paddingHorizontal: 14, height: 44, borderRadius: 22 },
     primaryBtnText: { color: '#fff', fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.semibold },

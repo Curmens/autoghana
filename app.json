@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "AutoGhana",
-    "slug": "autoghana-app",
+    "name": "GearsXXIV",
+    "slug": "gearsxxiv-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "autoghana",
+    "scheme": "gearsxxiv",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.jpg",
@@ -17,7 +17,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.autoghana.app",
+      "bundleIdentifier": "com.gearsxxiv.app",
       "infoPlist": {
         "NSCameraUsageDescription": "This app needs access to camera to scan VIN codes and take photos of vehicle diagnostics.",
         "NSLocationWhenInUseUsageDescription": "This app needs location access to show nearby mechanics, services, and traffic reports.",
@@ -29,12 +29,16 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.autoghana.app",
+      "package": "com.gearsxxiv.app",
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
         "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
+        "WRITE_EXTERNAL_STORAGE",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ]
     },
     "web": {
@@ -47,19 +51,25 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow AutoGhana to access your camera to scan VIN codes and capture diagnostic images."
+          "cameraPermission": "Allow GearsXXIV to access your camera to scan VIN codes and capture diagnostic images."
         }
       ],
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow AutoGhana to use your location to find nearby mechanics and provide traffic updates.",
-          "locationWhenInUsePermission": "Allow AutoGhana to use your location to find nearby services."
+          "locationAlwaysAndWhenInUsePermission": "Allow GearsXXIV to use your location to find nearby mechanics and provide traffic updates.",
+          "locationWhenInUsePermission": "Allow GearsXXIV to use your location to find nearby services."
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b54d9db1-369d-4792-933d-2ce1237c2a9c"
+      }
     }
   }
 }

@@ -115,7 +115,7 @@ export const SplashScreen = ({ onFinish }: SplashScreenProps) => {
                     </View>
                 </Animated.View>
 
-                <Text style={styles.appName}>AutoGhana</Text>
+                <Text style={styles.appName}>GearsXXIV</Text>
                 <Text style={styles.tagline}>Your trusted automotive companion</Text>
 
                 {/* Features */}

@@ -1,71 +1,30 @@
-// app/service-booking.jsx
+// app/service-booking.jsx — Modern, seamless booking flow
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Alert,
   FlatList,
   Image,
+  TextInput as RNTextInput,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Calendar } from 'react-native-calendars';
 import { Button, Card, ProgressBar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from './(tabs)/theme';
 
+// --- Mock data (unchanged)
 const services = [
-  {
-    id: 1,
-    name: 'Oil Change',
-    icon: 'opacity',
-    description: 'Full synthetic oil change with filter replacement',
-    duration: '30 mins',
-    price: 'GH₵120'
-  },
-  {
-    id: 2,
-    name: 'Brake Repair',
-    icon: 'album',
-    description: 'Brake pad replacement and system inspection',
-    duration: '2 hours',
-    price: 'GH₵350'
-  },
-  {
-    id: 3,
-    name: 'Tire Rotation',
-    icon: 'settings',
-    description: 'Complete tire rotation and pressure check',
-    duration: '45 mins',
-    price: 'GH₵80'
-  },
-  {
-    id: 4,
-    name: 'AC Service',
-    icon: 'ac-unit',
-    description: 'Air conditioning system service and recharge',
-    duration: '1 hour',
-    price: 'GH₵200'
-  },
-  {
-    id: 5,
-    name: 'Engine Diagnostics',
-    icon: 'search',
-    description: 'Comprehensive engine diagnostic scan',
-    duration: '45 mins',
-    price: 'GH₵150'
-  },
-  {
-    id: 6,
-    name: 'Battery Service',
-    icon: 'battery-full',
-    description: 'Battery testing and replacement if needed',
-    duration: '30 mins',
-    price: 'GH₵250'
-  },
+  { id: 1, name: 'Oil Change', icon: 'opacity', description: 'Full synthetic oil change with filter', duration: '30 mins', price: 'GH₵120' },
+  { id: 2, name: 'Brake Repair', icon: 'album', description: 'Brake pad replacement & inspection', duration: '2 hours', price: 'GH₵350' },
+  { id: 3, name: 'Tire Rotation', icon: 'settings', description: 'Rotation + pressure check', duration: '45 mins', price: 'GH₵80' },
+  { id: 4, name: 'AC Service', icon: 'ac-unit', description: 'AC system service & recharge', duration: '1 hour', price: 'GH₵200' },
+  { id: 5, name: 'Engine Diagnostics', icon: 'search', description: 'Comprehensive diagnostic scan', duration: '45 mins', price: 'GH₵150' },
+  { id: 6, name: 'Battery Service', icon: 'battery-full', description: 'Battery testing & replacement', duration: '30 mins', price: 'GH₵250' },
 ];
 
 const mechanics = [
@@ -107,654 +66,559 @@ const mechanics = [
   },
 ];
 
-const availableTimes = [
-  '09:00 AM', '10:30 AM', '12:00 PM',
-  '01:30 PM', '03:00 PM', '04:30 PM'
-];
+const baseTimes = ['09:00 AM', '10:30 AM', '12:00 PM', '01:30 PM', '03:00 PM', '04:30 PM'];
+
+// --- Helpers
+const daysAhead = (n = 14) => {
+  const out: { key: string; label: string; sub: string; isToday: boolean }[] = [];
+  const formatter = new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' });
+  const weekday = new Intl.DateTimeFormat('en', { weekday: 'short' });
+  for (let i = 0; i < n; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    const key = d.toISOString().split('T')[0];
+    out.push({
+      key,
+      label: i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : weekday.format(d),
+      sub: formatter.format(d),
+      isToday: i === 0,
+    });
+  }
+  return out;
+};
 
 export default function ServiceBookingScreen() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [selectedService, setSelectedService] = useState<typeof services[0] | null>(null);
-  const [selectedMechanic, setSelectedMechanic] = useState<typeof mechanics[0] | null>(null);
-  const [selectedDate, setSelectedDate] = useState('');
+  const [step, setStep] = useState(1);
+  const totalSteps = 4;
+  const progress = step / totalSteps;
+
+  const [query, setQuery] = useState('');
+  const filtered = useMemo(
+    () => services.filter(s => s.name.toLowerCase().includes(query.toLowerCase())),
+    [query]
+  );
+
+  const [selectedService, setSelectedService] = useState(null as (typeof services)[number] | null);
+  const [selectedMechanic, setSelectedMechanic] = useState(null as (typeof mechanics)[number] | null);
+  const [selectedDate, setSelectedDate] = useState(daysAhead()[0]?.key || '');
   const [selectedTime, setSelectedTime] = useState('');
 
-  const totalSteps = 4;
-  const progress = currentStep / totalSteps;
+  const dateStrip = useMemo(() => daysAhead(14), []);
+  const timesForDay = baseTimes; // you can tailor availability by mechanic/day here
 
-  const handleServiceSelect = (service: any) => {
-    setSelectedService(service);
-    setCurrentStep(2);
-  };
+  const goNext = () => setStep(Math.min(totalSteps, step + 1));
+  const goBack = () => (step > 1 ? setStep(step - 1) : router.back());
 
-  const handleMechanicSelect = (mechanic: any) => {
-    setSelectedMechanic(mechanic);
-    setCurrentStep(3);
-  };
-
-  const handleDateTimeConfirm = () => {
-    if (selectedDate && selectedTime) {
-      setCurrentStep(4);
-    } else {
-      Alert.alert('Incomplete', 'Please select both date and time.');
-    }
+  const confirmDateTime = () => {
+    if (!selectedDate || !selectedTime) return;
+    goNext();
   };
 
   const handleFinalConfirm = () => {
     Alert.alert(
       'Booking Confirmed!',
-      `Your ${selectedService?.name ?? 'selected service'} appointment with ${selectedMechanic?.name ?? 'selected mechanic'} is scheduled for ${selectedDate} at ${selectedTime}.`,
-      [
-        {
-          text: 'Done',
-          onPress: () => router.push('/(tabs)'),
-        },
-      ]
+      `Your ${selectedService?.name ?? 'service'} with ${selectedMechanic?.name ?? 'mechanic'} is scheduled for ${selectedDate} at ${selectedTime}.`,
+      [{ text: 'Done', onPress: () => router.push('/(tabs)') }]
     );
   };
 
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    } else {
-      router.back();
-    }
+  const StepTitle = () => {
+    const titles = ['Select a Service', 'Choose a Mechanic', 'Select Date & Time', 'Confirm Booking'];
+    return <Text style={styles.headerTitle}>{titles[step - 1]}</Text>;
   };
 
-  const getStepTitle = () => {
-    switch (currentStep) {
-      case 1: return 'Select a Service';
-      case 2: return 'Choose a Mechanic';
-      case 3: return 'Select Date & Time';
-      case 4: return 'Confirm Booking';
-      default: return 'Book Service';
-    }
-  };
+  // --- Step 1: Services (search + grid)
+  const StepServices = () => (
+    <View style={styles.stepWrap}>
+      <Text style={styles.stepHint}>What does your vehicle need?</Text>
 
-  const renderServiceStep = () => (
-    <View style={styles.stepContent}>
-      <Text style={styles.stepDescription}>
-        What service does your vehicle need?
-      </Text>
-      <FlatList
-        data={services}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.serviceCard}
-            onPress={() => handleServiceSelect(item)}
-          >
-            <Card style={styles.card}>
-              <Card.Content style={styles.serviceContent}>
-                <View style={styles.serviceIcon}>
-                  <Icon name={item.icon} size={28} color={theme.colors.primary} />
-                </View>
-                <View style={styles.serviceInfo}>
-                  <Text style={styles.serviceName}>{item.name}</Text>
-                  <Text style={styles.serviceDescription}>{item.description}</Text>
-                  <View style={styles.serviceDetails}>
-                    <Text style={styles.serviceDuration}>{item.duration}</Text>
-                    <Text style={styles.servicePrice}>{item.price}</Text>
-                  </View>
-                </View>
-                <Icon name="chevron-right" size={24} color={theme.colors.textSecondary} />
-              </Card.Content>
-            </Card>
+      <View style={styles.searchWrap}>
+        <Icon name="search" size={18} color={theme.colors.textSecondary} />
+        <RNTextInput
+          placeholder="Search services (e.g., oil, brake, AC)"
+          placeholderTextColor={theme.colors.textSecondary}
+          value={query}
+          onChangeText={setQuery}
+          style={styles.searchInput}
+        />
+        {query ? (
+          <TouchableOpacity onPress={() => setQuery('')}>
+            <Icon name="close" size={18} color={theme.colors.textSecondary} />
           </TouchableOpacity>
-        )}
-        keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={false}
-      />
+        ) : null}
+      </View>
+
+      <View style={styles.grid}>
+        {(filtered.length ? filtered : services).map(item => {
+          const active = selectedService?.id === item.id;
+          return (
+            <TouchableOpacity
+              key={item.id}
+              activeOpacity={0.9}
+              style={[styles.serviceCard, active && styles.serviceCardActive]}
+              onPress={() => {
+                setSelectedService(item);
+                setStep(2);
+              }}
+            >
+              <View style={[styles.serviceIcon, active && styles.serviceIconActive]}>
+                <Icon name={item.icon} size={22} color={active ? '#fff' : theme.colors.primary} />
+              </View>
+              <Text style={[styles.serviceName, active && styles.serviceNameActive]} numberOfLines={1}>
+                {item.name}
+              </Text>
+              <Text style={styles.serviceTiny} numberOfLines={2}>
+                {item.description}
+              </Text>
+              <View style={styles.serviceRow}>
+                <Text style={styles.serviceMeta}>{item.duration}</Text>
+                <Text style={[styles.serviceMeta, styles.servicePrice]}>{item.price}</Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 
-  const renderMechanicStep = () => (
-    <View style={styles.stepContent}>
-      <Text style={styles.stepDescription}>
-        Choose a mechanic for your {selectedService?.name}
+  // --- Step 2: Mechanics (cards list)
+  const StepMechanics = () => (
+    <View style={styles.stepWrap}>
+      <Text style={styles.stepHint}>
+        Choose a mechanic for your <Text style={styles.em}>{selectedService?.name}</Text>
       </Text>
       <FlatList
         data={mechanics}
-        renderItem={({ item }) => (
-          <Card style={styles.mechanicCard}>
-            <TouchableOpacity
-              style={styles.mechanicContent}
-              onPress={() => router.push(`/mechanic-profile?mechanicId=${item.id}`)}
-            >
-              <Image source={{ uri: item.image }} style={styles.mechanicImage} />
-              <View style={styles.mechanicInfo}>
-                <View style={styles.mechanicHeader}>
-                  <Text style={styles.mechanicName}>{item.name}</Text>
-                  <View style={[styles.statusDot, item.isOpen ? styles.openDot : styles.closedDot]} />
-                </View>
-                <View style={styles.mechanicStats}>
-                  <View style={styles.mechanicStat}>
-                    <Icon name="star" size={16} color="#F59E0B" />
-                    <Text style={styles.mechanicRating}>{item.rating}</Text>
-                    <Text style={styles.mechanicReviews}>({item.reviewCount})</Text>
-                  </View>
-                  <View style={styles.mechanicStat}>
-                    <Icon name="place" size={16} color={theme.colors.textSecondary} />
-                    <Text style={styles.mechanicDistance}>{item.distance}</Text>
-                  </View>
-                </View>
-                <Text style={styles.mechanicPrice}>{item.priceRange}</Text>
-                <Text style={styles.mechanicAvailable}>
-                  Next available: {item.nextAvailable}
-                </Text>
-                <View style={styles.specialtiesContainer}>
-                  {item.specialties.slice(0, 2).map((specialty, index) => (
-                    <View key={index} style={styles.specialtyChip}>
-                      <Text style={styles.specialtyText}>{specialty}</Text>
-                    </View>
-                  ))}
-                  {item.specialties.length > 2 && (
-                    <Text style={styles.moreSpecialties}>+{item.specialties.length - 2} more</Text>
-                  )}
-                </View>
-              </View>
-            </TouchableOpacity>
-            <View style={styles.mechanicActions}>
-              <Button
-                mode="outlined"
-                onPress={() => router.push(`/mechanic-profile?mechanicId=${item.id}`)}
-                style={styles.viewButton}
-              >
-                View Profile
-              </Button>
-              <Button
-                mode="contained"
-                onPress={() => handleMechanicSelect(item)}
-                style={styles.selectButton}
-              >
-                Select
-              </Button>
-            </View>
-          </Card>
-        )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={i => i.id}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ gap: theme.spacing.md }}
+        renderItem={({ item }) => {
+          const active = selectedMechanic?.id === item.id;
+          return (
+            <Card style={[styles.mechanicCard, active && styles.mechanicCardActive]}>
+              <TouchableOpacity
+                style={styles.mechanicContent}
+                onPress={() => router.push(`/mechanic-profile?mechanicId=${item.id}`)}
+                activeOpacity={0.9}
+              >
+                <Image source={{ uri: item.image }} style={styles.mechanicImage} />
+                <View style={{ flex: 1 }}>
+                  <View style={styles.mechanicTopRow}>
+                    <Text style={styles.mechanicName}>{item.name}</Text>
+                    <View style={[styles.statusChip, item.isOpen ? styles.openChip : styles.closedChip]}>
+                      <View style={[styles.dot, item.isOpen ? styles.dotOpen : styles.dotClosed]} />
+                      <Text style={[styles.statusText, item.isOpen ? styles.openText : styles.closedText]}>
+                        {item.isOpen ? 'Open' : 'Closed'}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.mechanicMetaRow}>
+                    <View style={styles.inline}>
+                      <Icon name="star" size={16} color={theme.colors.warning} />
+                      <Text style={styles.metaText}>{item.rating}</Text>
+                      <Text style={styles.metaSub}>({item.reviewCount})</Text>
+                    </View>
+                    <Text style={styles.sep}>•</Text>
+                    <View style={styles.inline}>
+                      <Icon name="place" size={16} color={theme.colors.textSecondary} />
+                      <Text style={styles.metaSub}>{item.distance}</Text>
+                    </View>
+                  </View>
+
+                  <Text style={styles.priceRange}>{item.priceRange}</Text>
+                  <Text style={styles.available}>Next available: {item.nextAvailable}</Text>
+
+                  <View style={styles.specialties}>
+                    {item.specialties.slice(0, 2).map((s, i) => (
+                      <View style={styles.chip} key={i}>
+                        <Text style={styles.chipText}>{s}</Text>
+                      </View>
+                    ))}
+                    {item.specialties.length > 2 && (
+                      <Text style={styles.more}>{`+${item.specialties.length - 2} more`}</Text>
+                    )}
+                  </View>
+                </View>
+              </TouchableOpacity>
+
+              <View style={styles.mechanicActions}>
+                <Button mode="outlined" onPress={() => router.push(`/mechanic-profile?mechanicId=${item.id}`)} style={styles.viewBtn}>
+                  Profile
+                </Button>
+                <Button
+                  mode="contained"
+                  onPress={() => {
+                    setSelectedMechanic(item);
+                    setStep(3);
+                  }}
+                  style={styles.selectBtn}
+                >
+                  {active ? 'Selected' : 'Select'}
+                </Button>
+              </View>
+            </Card>
+          );
+        }}
       />
     </View>
   );
 
-  const renderDateTimeStep = () => (
-    <View style={styles.stepContent}>
-      <Text style={styles.stepDescription}>
-        When would you like to schedule your appointment?
-      </Text>
+  // --- Step 3: Date & time (horizontal date strip + grid)
+  const StepDateTime = () => (
+    <View style={styles.stepWrap}>
+      <Text style={styles.stepHint}>Pick a date and time</Text>
 
-      <Card style={styles.calendarCard}>
-        <Calendar
-          style={styles.calendar}
-          onDayPress={(day) => setSelectedDate(day.dateString)}
-          markedDates={{
-            [selectedDate]: {
-              selected: true,
-              selectedColor: theme.colors.primary,
-            },
-          }}
-          minDate={new Date().toISOString().split('T')[0]}
-          theme={{
-            selectedDayBackgroundColor: theme.colors.primary,
-            selectedDayTextColor: 'white',
-            todayTextColor: theme.colors.primary,
-            arrowColor: theme.colors.primary,
-            monthTextColor: theme.colors.text,
-            textDayFontWeight: '500',
-            textMonthFontWeight: 'bold',
-            textDayHeaderFontWeight: '600',
-          }}
-        />
-      </Card>
-
-      {selectedDate && (
-        <View style={styles.timeSection}>
-          <Text style={styles.timeTitle}>Available Times</Text>
-          <View style={styles.timeGrid}>
-            {availableTimes.map((time) => (
-              <TouchableOpacity
-                key={time}
-                style={[
-                  styles.timeSlot,
-                  selectedTime === time && styles.selectedTimeSlot,
-                ]}
-                onPress={() => setSelectedTime(time)}
-              >
-                <Text
-                  style={[
-                    styles.timeText,
-                    selectedTime === time && styles.selectedTimeText,
-                  ]}
-                >
-                  {time}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-      )}
-
-      <Button
-        mode="contained"
-        style={styles.confirmButton}
-        onPress={handleDateTimeConfirm}
-        disabled={!selectedDate || !selectedTime}
+      {/* Quick pick row */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.dateStrip}
       >
-        Continue
-      </Button>
+        {dateStrip.map(d => {
+          const active = selectedDate === d.key;
+          return (
+            <TouchableOpacity
+              key={d.key}
+              onPress={() => {
+                setSelectedDate(d.key);
+                setSelectedTime('');
+              }}
+              style={[styles.datePill, active && styles.datePillActive]}
+              activeOpacity={0.9}
+            >
+              <Text style={[styles.datePillLabel, active && styles.datePillLabelActive]}>{d.label}</Text>
+              <Text style={[styles.datePillSub, active && styles.datePillSubActive]}>{d.sub}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+
+      <Text style={styles.timesTitle}>Available times</Text>
+      <View style={styles.timesGrid}>
+        {timesForDay.map(t => {
+          const active = selectedTime === t;
+          return (
+            <TouchableOpacity
+              key={t}
+              onPress={() => setSelectedTime(t)}
+              style={[styles.timeBtn, active && styles.timeBtnActive]}
+              activeOpacity={0.9}
+            >
+              <Text style={[styles.timeText, active && styles.timeTextActive]}>{t}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 
-  const renderConfirmationStep = () => (
-    <View style={styles.stepContent}>
-      <Text style={styles.stepDescription}>
-        Please review your booking details
-      </Text>
+  // --- Step 4: Confirmation
+  const StepConfirm = () => (
+    <View style={styles.stepWrap}>
+      <Text style={styles.stepHint}>Review and confirm your booking</Text>
 
       <Card style={styles.summaryCard}>
-        <Card.Title title="Booking Summary" />
-        <Card.Content>
-          <View style={styles.summaryItem}>
-            <Text style={styles.summaryLabel}>Service:</Text>
-            <Text style={styles.summaryValue}>{selectedService?.name}</Text>
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>Service</Text>
+          <View style={styles.summaryValWrap}>
+            <Text style={styles.summaryVal}>{selectedService?.name}</Text>
+            <TouchableOpacity onPress={() => setStep(1)}>
+              <Text style={styles.link}>Edit</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.summaryItem}>
-            <Text style={styles.summaryLabel}>Mechanic:</Text>
-            <Text style={styles.summaryValue}>{selectedMechanic?.name}</Text>
+        </View>
+
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>Mechanic</Text>
+          <View style={styles.summaryValWrap}>
+            <Text style={styles.summaryVal}>{selectedMechanic?.name}</Text>
+            <TouchableOpacity onPress={() => setStep(2)}>
+              <Text style={styles.link}>Edit</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.summaryItem}>
-            <Text style={styles.summaryLabel}>Date:</Text>
-            <Text style={styles.summaryValue}>{selectedDate}</Text>
+        </View>
+
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>Date</Text>
+          <View style={styles.summaryValWrap}>
+            <Text style={styles.summaryVal}>{selectedDate}</Text>
+            <TouchableOpacity onPress={() => setStep(3)}>
+              <Text style={styles.link}>Edit</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.summaryItem}>
-            <Text style={styles.summaryLabel}>Time:</Text>
-            <Text style={styles.summaryValue}>{selectedTime}</Text>
+        </View>
+
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>Time</Text>
+          <View style={styles.summaryValWrap}>
+            <Text style={styles.summaryVal}>{selectedTime}</Text>
+            <TouchableOpacity onPress={() => setStep(3)}>
+              <Text style={styles.link}>Edit</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.summaryItem}>
-            <Text style={styles.summaryLabel}>Duration:</Text>
-            <Text style={styles.summaryValue}>{selectedService?.duration}</Text>
-          </View>
-          <View style={[styles.summaryItem, styles.totalItem]}>
-            <Text style={styles.totalLabel}>Estimated Cost:</Text>
-            <Text style={styles.totalValue}>{selectedService?.price}</Text>
-          </View>
-        </Card.Content>
+        </View>
+
+        <View style={styles.divider} />
+
+        <View style={styles.summaryRow}>
+          <Text style={[styles.summaryLabel, { fontWeight: theme.fontWeight.semibold }]}>Estimated Cost</Text>
+          <Text style={styles.totalPrice}>{selectedService?.price}</Text>
+        </View>
       </Card>
 
-      <Card style={styles.noteCard}>
-        <Card.Content>
-          <View style={styles.noteContent}>
-            <Icon name="info" size={20} color={theme.colors.primary} />
-            <Text style={styles.noteText}>
-              You will receive a confirmation SMS with the mechanic&apos;s contact details.
-            </Text>
-          </View>
-        </Card.Content>
-      </Card>
-
-      <Button
-        mode="contained"
-        style={styles.confirmButton}
-        onPress={handleFinalConfirm}
-      >
-        Confirm Booking
-      </Button>
+      <View style={styles.noteCard}>
+        <Icon name="info" size={18} color={theme.colors.primary} />
+        <Text style={styles.noteText}>
+          You’ll receive a confirmation SMS with the mechanic’s contact details.
+        </Text>
+      </View>
     </View>
   );
 
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 1: return renderServiceStep();
-      case 2: return renderMechanicStep();
-      case 3: return renderDateTimeStep();
-      case 4: return renderConfirmationStep();
-      default: return renderServiceStep();
-    }
+  // --- Header
+  const Header = () => (
+    <View style={styles.header}>
+      <TouchableOpacity style={styles.navBtn} onPress={goBack}>
+        <Icon name="arrow-back" size={22} color={theme.colors.textPrimary} />
+      </TouchableOpacity>
+      <View style={styles.headerCenter}>
+        <StepTitle />
+        <Text style={styles.stepSub}>Step {step} of {totalSteps}</Text>
+      </View>
+      <View style={{ width: 40 }} />
+    </View>
+  );
+
+  // --- Sticky Bottom (context + primary CTA)
+  const StickyBar = () => {
+    const onPress = () => {
+      if (step === 1 && selectedService) return setStep(2);
+      if (step === 2 && selectedMechanic) return setStep(3);
+      if (step === 3 && selectedDate && selectedTime) return confirmDateTime();
+      if (step === 4) return handleFinalConfirm();
+    };
+
+    const disabled =
+      (step === 1 && !selectedService) ||
+      (step === 2 && !selectedMechanic) ||
+      (step === 3 && (!selectedDate || !selectedTime));
+
+    const label = step === 4 ? 'Confirm Booking' : 'Continue';
+
+    return (
+      <View style={styles.stickyBar}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.contextTitle}>
+            {selectedService?.name ?? 'Select service'}
+          </Text>
+          <Text style={styles.contextSub} numberOfLines={1}>
+            {selectedMechanic?.name ?? 'Pick a mechanic'} • {selectedDate || 'Pick a date'} {selectedTime ? `• ${selectedTime}` : ''}
+          </Text>
+        </View>
+        <Button mode="contained" onPress={onPress} disabled={disabled} style={styles.primaryCta}>
+          {label}
+        </Button>
+      </View>
+    );
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Icon name="arrow-back" size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <View style={styles.headerContent}>
-          <Text style={styles.headerTitle}>{getStepTitle()}</Text>
-          <Text style={styles.stepIndicator}>Step {currentStep} of {totalSteps}</Text>
-        </View>
-        <View style={styles.placeholder} />
+      <Header />
+
+      <View style={styles.progressWrap}>
+        <ProgressBar progress={progress} color={theme.colors.primary} style={styles.progress} />
       </View>
 
-      {/* Progress Bar */}
-      <View style={styles.progressContainer}>
-        <ProgressBar
-          progress={progress}
-          color={theme.colors.primary}
-          style={styles.progressBar}
-        />
-      </View>
-
-      {/* Content */}
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {renderStepContent()}
+        {step === 1 && <StepServices />}
+        {step === 2 && <StepMechanics />}
+        {step === 3 && <StepDateTime />}
+        {step === 4 && <StepConfirm />}
+
+        <View style={{ height: 120 }} />
       </ScrollView>
+
+      <StickyBar />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
+  container: { flex: 1, backgroundColor: theme.colors.background },
+  // Header
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.md,
-    backgroundColor: theme.colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    backgroundColor: theme.colors.white,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: theme.colors.lightest,
   },
-  backButton: {
-    padding: theme.spacing.sm,
-  },
-  headerContent: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: theme.fontSize.lg,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
-  },
-  stepIndicator: {
-    fontSize: theme.fontSize.sm,
-    color: theme.colors.textSecondary,
-    marginTop: theme.spacing.xs,
-  },
-  placeholder: {
-    width: 40,
-  },
-  progressContainer: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    backgroundColor: theme.colors.surface,
-  },
-  progressBar: {
-    height: 4,
-    borderRadius: 2,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: theme.spacing.md,
-  },
-  stepContent: {
-    paddingVertical: theme.spacing.lg,
-  },
-  stepDescription: {
-    fontSize: theme.fontSize.md,
-    color: theme.colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: theme.spacing.lg,
-    paddingHorizontal: theme.spacing.md,
-  },
-  card: {
-    backgroundColor: theme.colors.surface,
-    ...theme.shadows.small,
-  },
-  serviceCard: {
-    marginBottom: theme.spacing.md,
-  },
-  serviceContent: {
+  navBtn: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.card },
+  headerCenter: { flex: 1, alignItems: 'center', gap: 2 },
+  headerTitle: { color: theme.colors.textPrimary, fontWeight: theme.fontWeight.semibold, fontSize: theme.fontSize.lg },
+  stepSub: { color: theme.colors.textSecondary, fontSize: theme.fontSize.xs },
+
+  // Progress
+  progressWrap: { paddingHorizontal: theme.spacing.md, paddingTop: theme.spacing.sm, backgroundColor: theme.colors.white },
+  progress: { height: 4, borderRadius: 2 },
+
+  // Content
+  content: { flex: 1, paddingHorizontal: theme.spacing.md },
+
+  stepWrap: { paddingVertical: theme.spacing.lg },
+  stepHint: { color: theme.colors.textSecondary, textAlign: 'center', marginBottom: theme.spacing.lg },
+
+  // Search
+  searchWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.md,
+    gap: 8,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: 12,
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.borderRadius.xl,
+    marginBottom: theme.spacing.md,
   },
+  searchInput: { flex: 1, color: theme.colors.textPrimary, paddingVertical: 0 },
+
+  // Services grid
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.md },
+  serviceCard: {
+    width: '48%',
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.borderRadius.xl,
+    padding: theme.spacing.md,
+    ...theme.shadows.small,
+  },
+  serviceCardActive: { borderWidth: 2, borderColor: theme.colors.primary },
   serviceIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: `${theme.colors.primary}10`,
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: `${theme.colors.primary}12`,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  serviceInfo: {
-    flex: 1,
-  },
-  serviceName: {
-    fontSize: theme.fontSize.md,
-    fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.text,
-    marginBottom: theme.spacing.xs,
-  },
-  serviceDescription: {
-    fontSize: theme.fontSize.sm,
-    color: theme.colors.textSecondary,
     marginBottom: theme.spacing.sm,
   },
-  serviceDetails: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  serviceDuration: {
-    fontSize: theme.fontSize.sm,
-    color: theme.colors.textSecondary,
-  },
-  servicePrice: {
-    fontSize: theme.fontSize.sm,
-    fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.primary,
-  },
-  mechanicCard: {
-    backgroundColor: theme.colors.surface,
-    marginBottom: theme.spacing.md,
+  serviceIconActive: { backgroundColor: theme.colors.primary },
+  serviceName: { color: theme.colors.textPrimary, fontWeight: theme.fontWeight.semibold },
+  serviceNameActive: { color: '#fff' },
+  serviceTiny: { color: theme.colors.textSecondary, fontSize: theme.fontSize.xs, marginTop: 2 },
+  serviceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: theme.spacing.sm },
+  serviceMeta: { color: theme.colors.textSecondary, fontSize: theme.fontSize.xs },
+  servicePrice: { color: theme.colors.primary, fontWeight: theme.fontWeight.semibold },
+
+  em: { color: theme.colors.textPrimary, fontWeight: theme.fontWeight.semibold },
+
+  // Mechanics
+  mechanicCard: { backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.xl, overflow: 'hidden', ...theme.shadows.small },
+  mechanicCardActive: { borderWidth: 2, borderColor: theme.colors.primary },
+  mechanicContent: { flexDirection: 'row', padding: theme.spacing.md, gap: theme.spacing.md },
+  mechanicImage: { width: 64, height: 64, borderRadius: theme.borderRadius.lg, backgroundColor: theme.colors.lightest },
+  mechanicTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  mechanicName: { color: theme.colors.textPrimary, fontWeight: theme.fontWeight.semibold },
+  statusChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999 },
+  openChip: { backgroundColor: `${theme.colors.success}15` },
+  closedChip: { backgroundColor: `${theme.colors.error}12` },
+  dot: { width: 8, height: 8, borderRadius: 4 },
+  dotOpen: { backgroundColor: theme.colors.success },
+  dotClosed: { backgroundColor: theme.colors.error },
+  statusText: { fontSize: theme.fontSize.xs, fontWeight: theme.fontWeight.medium },
+  openText: { color: theme.colors.success },
+  closedText: { color: theme.colors.error },
+
+  mechanicMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
+  inline: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  metaText: { color: theme.colors.textPrimary, fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.medium },
+  metaSub: { color: theme.colors.textSecondary, fontSize: theme.fontSize.sm },
+  sep: { color: theme.colors.textSecondary },
+
+  priceRange: { color: theme.colors.primary, fontWeight: theme.fontWeight.semibold, marginTop: 6 },
+  available: { color: theme.colors.textSecondary, marginTop: 2 },
+  specialties: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, alignItems: 'center', marginTop: 8 },
+  chip: { backgroundColor: `${theme.colors.primary}10`, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999 },
+  chipText: { color: theme.colors.primary, fontSize: theme.fontSize.xs, fontWeight: theme.fontWeight.medium },
+  more: { color: theme.colors.textSecondary, fontSize: theme.fontSize.xs, fontStyle: 'italic' },
+
+  mechanicActions: { flexDirection: 'row', gap: theme.spacing.md, padding: theme.spacing.md, paddingTop: 0 },
+  viewBtn: { flex: 1, backgroundColor: theme.colors.card },
+  selectBtn: { flex: 1 },
+
+  // Date & time
+  dateStrip: { gap: 10, paddingVertical: 4 },
+  datePill: {
+    width: 96,
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.borderRadius.xl,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    alignItems: 'center',
     ...theme.shadows.small,
   },
-  mechanicContent: {
-    flexDirection: 'row',
-    padding: theme.spacing.md,
-    gap: theme.spacing.md,
-  },
-  mechanicImage: {
-    width: 64,
-    height: 64,
-    borderRadius: theme.borderRadius.md,
-  },
-  mechanicInfo: {
-    flex: 1,
-  },
-  mechanicHeader: {
-    flexDirection: 'row',
+  datePillActive: { backgroundColor: theme.colors.primary },
+  datePillLabel: { color: theme.colors.textPrimary, fontWeight: theme.fontWeight.semibold },
+  datePillLabelActive: { color: '#fff' },
+  datePillSub: { color: theme.colors.textSecondary, fontSize: theme.fontSize.xs, marginTop: 2 },
+  datePillSubActive: { color: '#fff' },
+
+  timesTitle: { color: theme.colors.textPrimary, fontWeight: theme.fontWeight.semibold, marginTop: theme.spacing.lg, marginBottom: theme.spacing.sm },
+  timesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  timeBtn: {
+    width: '30.5%',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: theme.spacing.xs,
-  },
-  mechanicName: {
-    fontSize: theme.fontSize.md,
-    fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.text,
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  openDot: {
-    backgroundColor: theme.colors.success,
-  },
-  closedDot: {
-    backgroundColor: theme.colors.error,
-  },
-  mechanicStats: {
-    flexDirection: 'row',
-    gap: theme.spacing.md,
-    marginBottom: theme.spacing.xs,
-  },
-  mechanicStat: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.xs,
-  },
-  mechanicRating: {
-    fontSize: theme.fontSize.sm,
-    fontWeight: theme.fontWeight.medium,
-    color: theme.colors.text,
-  },
-  mechanicReviews: {
-    fontSize: theme.fontSize.sm,
-    color: theme.colors.textSecondary,
-  },
-  mechanicDistance: {
-    fontSize: theme.fontSize.sm,
-    color: theme.colors.textSecondary,
-  },
-  mechanicPrice: {
-    fontSize: theme.fontSize.sm,
-    fontWeight: theme.fontWeight.medium,
-    color: theme.colors.primary,
-    marginBottom: theme.spacing.xs,
-  },
-  mechanicAvailable: {
-    fontSize: theme.fontSize.sm,
-    color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.sm,
-  },
-  specialtiesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing.xs,
-    alignItems: 'center',
-  },
-  specialtyChip: {
-    backgroundColor: `${theme.colors.primary}10`,
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.borderRadius.sm,
-  },
-  specialtyText: {
-    fontSize: theme.fontSize.xs,
-    color: theme.colors.primary,
-    fontWeight: theme.fontWeight.medium,
-  },
-  moreSpecialties: {
-    fontSize: theme.fontSize.xs,
-    color: theme.colors.textSecondary,
-    fontStyle: 'italic',
-  },
-  mechanicActions: {
-    flexDirection: 'row',
-    paddingHorizontal: theme.spacing.md,
-    paddingBottom: theme.spacing.md,
-    gap: theme.spacing.md,
-  },
-  viewButton: {
-    flex: 1,
-    backgroundColor: theme.colors.surface,
-  },
-  selectButton: {
-    flex: 1,
-  },
-  calendarCard: {
-    backgroundColor: theme.colors.surface,
-    marginBottom: theme.spacing.lg,
-    ...theme.shadows.small,
-  },
-  calendar: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-  },
-  timeSection: {
-    marginBottom: theme.spacing.lg,
-  },
-  timeTitle: {
-    fontSize: theme.fontSize.md,
-    fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.text,
-    marginBottom: theme.spacing.md,
-  },
-  timeGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing.sm,
-  },
-  timeSlot: {
-    width: '31%',
-    padding: theme.spacing.md,
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.md,
-    alignItems: 'center',
+    paddingVertical: 14,
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: theme.colors.card,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    ...theme.shadows.small,
   },
-  selectedTimeSlot: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
-  },
-  timeText: {
-    fontSize: theme.fontSize.sm,
-    fontWeight: theme.fontWeight.medium,
-    color: theme.colors.text,
-  },
-  selectedTimeText: {
-    color: 'white',
-  },
-  confirmButton: {
-    marginTop: theme.spacing.lg,
-    paddingVertical: theme.spacing.sm,
-  },
-  summaryCard: {
-    backgroundColor: theme.colors.surface,
-    marginBottom: theme.spacing.md,
-    ...theme.shadows.small,
-  },
-  summaryItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: theme.spacing.sm,
-  },
-  summaryLabel: {
-    fontSize: theme.fontSize.md,
-    color: theme.colors.textSecondary,
-  },
-  summaryValue: {
-    fontSize: theme.fontSize.md,
-    fontWeight: theme.fontWeight.medium,
-    color: theme.colors.text,
-  },
-  totalItem: {
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
-    marginTop: theme.spacing.sm,
-    paddingTop: theme.spacing.md,
-  },
-  totalLabel: {
-    fontSize: theme.fontSize.md,
-    fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.text,
-  },
-  totalValue: {
-    fontSize: theme.fontSize.lg,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.primary,
-  },
+  timeBtnActive: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
+  timeText: { color: theme.colors.textPrimary, fontWeight: theme.fontWeight.medium },
+  timeTextActive: { color: '#fff' },
+
+  // Summary
+  summaryCard: { backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, ...theme.shadows.small },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: theme.spacing.md },
+  summaryLabel: { color: theme.colors.textSecondary },
+  summaryValWrap: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  summaryVal: { color: theme.colors.textPrimary, fontWeight: theme.fontWeight.medium },
+  link: { color: theme.colors.primary, fontWeight: theme.fontWeight.medium },
+  divider: { height: StyleSheet.hairlineWidth, backgroundColor: theme.colors.lightest, marginVertical: theme.spacing.md },
+  totalPrice: { color: theme.colors.primary, fontWeight: theme.fontWeight.bold, fontSize: theme.fontSize.lg },
+
   noteCard: {
-    backgroundColor: `${theme.colors.primary}10`,
-    marginBottom: theme.spacing.lg,
-  },
-  noteContent: {
     flexDirection: 'row',
+    gap: 10,
     alignItems: 'flex-start',
-    gap: theme.spacing.sm,
+    padding: theme.spacing.lg,
+    borderRadius: theme.borderRadius.xl,
+    backgroundColor: `${theme.colors.primary}10`,
+    marginTop: theme.spacing.lg,
   },
-  noteText: {
-    fontSize: theme.fontSize.sm,
-    color: theme.colors.text,
-    flex: 1,
-    lineHeight: 20,
+  noteText: { color: theme.colors.textPrimary, flex: 1, lineHeight: 20 },
+
+  // Sticky bottom bar
+  stickyBar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    padding: theme.spacing.md,
+    paddingBottom: theme.spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.md,
+    backgroundColor: theme.colors.white,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: theme.colors.lightest,
+    ...theme.shadows.large,
+    paddingHorizontal: theme.spacing.xxl,
   },
+  contextTitle: { color: theme.colors.textPrimary, fontWeight: theme.fontWeight.semibold },
+  contextSub: { color: theme.colors.textSecondary, fontSize: theme.fontSize.xs, marginTop: 2 },
+  primaryCta: { borderRadius: 16, minWidth: 140 },
 });

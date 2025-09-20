@@ -18,9 +18,12 @@ import {
   View
 } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import { Button, Card, Chip, FAB } from 'react-native-paper';
+import { Button, Card, Chip } from 'react-native-paper';
+
 
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useFABPosition } from '../../hooks/useFabPosition';
 import { theme } from './theme';
 
 type ListRenderItem<T> = ({ item, index }: { item: T; index: number }) => React.ReactElement | null;
@@ -50,9 +53,12 @@ interface MaintenanceItem {
   mileage?: string;
 }
 
+
+
 export default function MyGarageScreen() {
   const [currentPage, setCurrentPage] = useState(0);
   const pagerRef = useRef<PagerView>(null);
+  const fabPosition = useFABPosition();
 
   const vehicles: Vehicle[] = [
     {
@@ -408,112 +414,113 @@ export default function MyGarageScreen() {
       </ScrollView>
 
       <BottomSheetModal
-  ref={addSheetRef}
-  snapPoints={snapPoints}
-  index={0}
-  backdropComponent={(props) => (
-    <BottomSheetBackdrop
-      {...props}
-      appearsOnIndex={0}
-      disappearsOnIndex={-1}
-      pressBehavior="close"
-      opacity={0.35}
-    />
-  )}
-  backgroundStyle={styles.sheetBackground}
-  handleIndicatorStyle={styles.sheetHandle}
-  enablePanDownToClose
->
-  <BottomSheetView style={styles.bottomSheetContent}>
-    {/* Header */}
-    <View style={styles.sheetHeader}>
-      <Text style={styles.sheetTitle}>Add a vehicle</Text>
-      <TouchableOpacity onPress={closeAddSheet}>
-        <Ionicons name="close" size={20} color={theme.colors.textSecondary} />
-      </TouchableOpacity>
-    </View>
-
-    {/* Quick actions */}
-    <View style={styles.sheetRow}>
-      <TouchableOpacity
-        style={styles.sheetOption}
-        onPress={() => { closeAddSheet(); router.push('/vin-scanner'); }}
+        ref={addSheetRef}
+        snapPoints={snapPoints}
+        index={0}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            pressBehavior="close"
+            opacity={0.35}
+          />
+        )}
+        backgroundStyle={styles.sheetBackground}
+        handleIndicatorStyle={styles.sheetHandle}
+        enablePanDownToClose
       >
-        <Ionicons name="qr-code-outline" size={22} color={theme.colors.primary} />
-        <Text style={styles.sheetOptionText}>Scan VIN</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.sheetOption}
-        onPress={() => { closeAddSheet(); router.push('/manual-vehicle-entry'); }}
-      >
-        <Ionicons name="create-outline" size={22} color={theme.colors.primary} />
-        <Text style={styles.sheetOptionText}>Enter manually</Text>
-      </TouchableOpacity>
-    </View>
+        <BottomSheetView style={styles.bottomSheetContent}>
+          {/* Header */}
+          <View style={styles.sheetHeader}>
+            <Text style={styles.sheetTitle}>Add a vehicle</Text>
+            <TouchableOpacity onPress={closeAddSheet}>
+              <Ionicons name="close" size={20} color={theme.colors.textSecondary} />
+            </TouchableOpacity>
+          </View>
 
-    <View style={styles.sheetDivider} />
+          {/* Quick actions */}
+          <View style={styles.sheetRow}>
+            <TouchableOpacity
+              style={styles.sheetOption}
+              onPress={() => { closeAddSheet(); router.push('/vin-scanner'); }}
+            >
+              <Ionicons name="qr-code-outline" size={22} color={theme.colors.primary} />
+              <Text style={styles.sheetOptionText}>Scan VIN</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.sheetOption}
+              onPress={() => { closeAddSheet(); router.push('/manual-vehicle-entry'); }}
+            >
+              <Ionicons name="create-outline" size={22} color={theme.colors.primary} />
+              <Text style={styles.sheetOptionText}>Enter manually</Text>
+            </TouchableOpacity>
+          </View>
 
-    {/* Quick add form */}
-    <Text style={styles.sheetSub}>Quick add</Text>
-    <View style={styles.quickForm}>
-      <BottomSheetTextInput
-        placeholder="Make"
-        value={quick.make}
-        onChangeText={(t) => setQuick({ ...quick, make: t })}
-        style={[styles.bsInput, styles.bsInputSpacing]}
-      />
-      <BottomSheetTextInput
-        placeholder="Model"
-        value={quick.model}
-        onChangeText={(t) => setQuick({ ...quick, model: t })}
-        style={[styles.bsInput, styles.bsInputSpacing]}
-      />
+          <View style={styles.sheetDivider} />
 
-      <View style={styles.quickRow}>
-        <BottomSheetTextInput
-          placeholder="Year"
-          value={quick.year}
-          onChangeText={(t) => setQuick({ ...quick, year: t })}
-          keyboardType="number-pad"
-          style={[styles.bsInput, styles.quickHalf]}
-        />
-        <BottomSheetTextInput
-          placeholder="Plate"
-          value={quick.plate}
-          onChangeText={(t) => setQuick({ ...quick, plate: t.toUpperCase() })}
-          autoCapitalize="characters"
-          style={[styles.bsInput, styles.quickHalf]}
-        />
-      </View>
+          {/* Quick add form */}
+          <Text style={styles.sheetSub}>Quick add</Text>
+          <View style={styles.quickForm}>
+            <BottomSheetTextInput
+              placeholder="Make"
+              value={quick.make}
+              onChangeText={(t) => setQuick({ ...quick, make: t })}
+              style={[styles.bsInput, styles.bsInputSpacing]}
+            />
+            <BottomSheetTextInput
+              placeholder="Model"
+              value={quick.model}
+              onChangeText={(t) => setQuick({ ...quick, model: t })}
+              style={[styles.bsInput, styles.bsInputSpacing]}
+            />
 
-      <View style={styles.bottomSheetActions}>
-        <Button mode="outlined" onPress={closeAddSheet} style={styles.cancelButton}>
-          Cancel
-        </Button>
-        <Button mode="contained" onPress={onQuickSave} style={styles.saveButton}>
-          Quick Save
-        </Button>
-      </View>
+            <View style={styles.quickRow}>
+              <BottomSheetTextInput
+                placeholder="Year"
+                value={quick.year}
+                onChangeText={(t) => setQuick({ ...quick, year: t })}
+                keyboardType="number-pad"
+                style={[styles.bsInput, styles.quickHalf]}
+              />
+              <BottomSheetTextInput
+                placeholder="Plate"
+                value={quick.plate}
+                onChangeText={(t) => setQuick({ ...quick, plate: t.toUpperCase() })}
+                autoCapitalize="characters"
+                style={[styles.bsInput, styles.quickHalf]}
+              />
+            </View>
 
-      <TouchableOpacity
-        style={styles.fullFormButton}
-        onPress={() => { closeAddSheet(); router.push('/add-vehicle'); }}
-      >
-        <Text style={styles.fullFormText}>Or add complete vehicle details</Text>
-      </TouchableOpacity>
-    </View>
-  </BottomSheetView>
-</BottomSheetModal>
+            <View style={styles.bottomSheetActions}>
+              <Button mode="outlined" onPress={closeAddSheet} style={styles.cancelButton}>
+                Cancel
+              </Button>
+              <Button mode="contained" onPress={onQuickSave} style={styles.saveButton}>
+                Quick Save
+              </Button>
+            </View>
+
+            <TouchableOpacity
+              style={styles.fullFormButton}
+              onPress={() => { closeAddSheet(); router.push('/add-vehicle'); }}
+            >
+              <Text style={styles.fullFormText}>Or add complete vehicle details</Text>
+            </TouchableOpacity>
+          </View>
+        </BottomSheetView>
+      </BottomSheetModal>
 
       {/* Floating Action Button */}
-      <View style={styles.fabContainer}>
-        <FAB
-          mode="elevated"
-          icon="plus"
-          label="Add vehicle"
+      <View style={[styles.fabContainer, fabPosition]}>
+        <TouchableOpacity
+          activeOpacity={0.9}
           onPress={() => openAddSheet()}
-          style={styles.fabModern}
-        />
+          style={styles.fabButton}
+        >
+          <Icon name="add" size={18} color="#fff" />
+          <Text style={styles.fabLabel}>Add vehicle</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -909,26 +916,26 @@ const styles = StyleSheet.create({
   // FAB
   fabContainer: {
     position: 'absolute',
-    right: theme.spacing.lg,
-    bottom: theme.spacing.lg + 50, // sits above tab bar; tweak if needed
     alignItems: 'center',
-  },
-  fabModern: {
-    backgroundColor: theme.colors.primary,
-    borderRadius: 28,                 // pill
-    ...theme.shadows.small,           // soft shadow from your theme
-    paddingHorizontal: 6,             // space for the pill
-  },
-  fabContent: {
-    height: 56,                       // comfy touch target
+    zIndex: 1000,
   },
 
-  // white text
   fabLabel: {
     color: '#fff',
-    fontSize: theme.fontSize.sm,
-    fontWeight: theme.fontWeight.medium,
-    marginLeft: 8,
+    fontSize: theme.fontSize?.sm,
+    fontWeight: theme.fontWeight?.semibold
+  },
+
+
+  fabButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: theme.colors.primary,
+    borderRadius: 28,
+    paddingHorizontal: 16,
+    height: 56,
+    ...theme.shadows.small,
   },
 
   // Bottom sheet styles
@@ -1066,35 +1073,35 @@ const styles = StyleSheet.create({
   },
 
   sheetBackground: {
-  backgroundColor: theme.colors.white,
-  borderTopLeftRadius: 20,
-  borderTopRightRadius: 20,
-},
-sheetHandle: {
-  backgroundColor: theme.colors.border,
-  width: 40,
-  height: 4,
-  borderRadius: 2,
-  alignSelf: 'center',
-},
+    backgroundColor: theme.colors.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  sheetHandle: {
+    backgroundColor: theme.colors.border,
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    alignSelf: 'center',
+  },
 
-bottomSheetContent: {
-  flex: 1,
-  paddingHorizontal: theme.spacing.lg,
-  paddingBottom: theme.spacing.lg,
-},
+  bottomSheetContent: {
+    flex: 1,
+    paddingHorizontal: theme.spacing.lg,
+    paddingBottom: theme.spacing.lg,
+  },
 
-// Flat, airy inputs inside the sheet
-bsInput: {
-  backgroundColor: `${theme.colors.primary}0D`, // light tint
-  borderRadius: theme.borderRadius.md,
-  paddingHorizontal: theme.spacing.md,
-  paddingVertical: 12,
-  fontSize: theme.fontSize.sm,
-  color: theme.colors.text,
-},
-bsInputSpacing: {
-  marginBottom: theme.spacing.md,
-},
+  // Flat, airy inputs inside the sheet
+  bsInput: {
+    backgroundColor: `${theme.colors.primary}0D`, // light tint
+    borderRadius: theme.borderRadius.md,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: 12,
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.text,
+  },
+  bsInputSpacing: {
+    marginBottom: theme.spacing.md,
+  },
 
 });

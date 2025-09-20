@@ -2,12 +2,12 @@
 import { router } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-type ListRenderItem<T> = ({ item, index }: { item: T; index: number }) => React.ReactElement | null;
 import { Card, Chip, Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from './theme';
+
+type ListRenderItem<T> = ({ item, index }: { item: T; index: number }) => React.ReactElement | null;
 
 interface Product {
     id: number;
@@ -31,14 +31,14 @@ export default function MarketplaceScreen() {
     const products: Product[] = useMemo(() => [
         {
             id: 1,
-            name: 'NGK Spark Plugs - Set of 4',
+            name: 'Continental PremiumContact 6 Tire - 205/55R16',
             price: 150,
             originalPrice: 180,
             rating: 4.8,
             reviewCount: 245,
-            image: 'https://media.istockphoto.com/id/637294322/photo/holding-old-and-new-car-spark-plugs-on-engine.jpg?s=1024x1024&w=is&k=20&c=utjoMwhPWQ80qxj-PZomUFFKiILZ14KlqFU2ZAAYo9k=',
+            image: 'https://images.pexels.com/photos/29255737/pexels-photo-29255737.jpeg',
             seller: 'AutoParts Ghana',
-            category: 'Engine',
+            category: 'Tyres',
         },
         {
             id: 2,

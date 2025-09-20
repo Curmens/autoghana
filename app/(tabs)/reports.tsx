@@ -11,6 +11,7 @@ import {
 import { Card, Chip, Divider, Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useFABPosition } from '../../hooks/useFabPosition';
 import { theme, themeComponents } from './theme';
 
 type ReportType = 'police' | 'traffic' | 'hazard' | 'accident';
@@ -87,6 +88,7 @@ export default function ReportsScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedType, setSelectedType] = useState<'all' | ReportType>('all');
     const [reports, setReports] = useState<Report[]>(MOCK);
+    const fabPosition = useFABPosition();
 
     const filtered = useMemo(() => {
         const q = searchQuery.trim().toLowerCase();
@@ -265,7 +267,7 @@ export default function ReportsScreen() {
             />
 
             {/* Extended premium FAB */}
-            <View style={styles.fabContainer}>
+            <View style={[styles.fabContainer, fabPosition]}>
                 <TouchableOpacity
                     activeOpacity={0.9}
                     onPress={() => router.push('/(tabs)/create-report')}
@@ -538,8 +540,6 @@ const styles = StyleSheet.create({
     // FAB
     fabContainer: {
         position: 'absolute',
-        right: theme.spacing.lg,
-        bottom: theme.spacing.lg + 100,
         alignItems: 'center',
     },
     fabButton: {

@@ -69,6 +69,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             await AsyncStorage.setItem('user', JSON.stringify(mockUser));
             setUser(mockUser);
         } catch (error) {
+            console.error('Login failed. Please check your credentials.', error);
             throw new Error('Login failed. Please check your credentials.');
         } finally {
             setIsLoading(false);
@@ -91,6 +92,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             await AsyncStorage.setItem('user', JSON.stringify(newUser));
             setUser(newUser);
         } catch (error) {
+            console.error('Registration failed. Please try again.', error);
             throw new Error('Registration failed. Please try again.');
         } finally {
             setIsLoading(false);

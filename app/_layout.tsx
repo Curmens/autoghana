@@ -1,10 +1,14 @@
+// app/_layout.tsx
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 import { Provider as PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
+
 import { paperTheme, theme } from './(tabs)/theme';
 import { SplashScreen } from './components/SplashScreen';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -14,12 +18,12 @@ function AppNavigator() {
     const { isAuthenticated, isLoading } = useAuth();
     const [showSplash, setShowSplash] = useState(true);
 
-    // Show splash screen for first-time visitors or on app restart
+    // Initial splash
     if (showSplash) {
         return <SplashScreen onFinish={() => setShowSplash(false)} />;
     }
 
-    // Show loading state while checking authentication
+    // Auth check splash
     if (isLoading) {
         return <SplashScreen onFinish={() => { }} />;
     }
@@ -27,70 +31,43 @@ function AppNavigator() {
     return (
         <Stack
             screenOptions={{
-                headerStyle: {
-                    backgroundColor: theme.colors.primary,
-                },
+                headerStyle: { backgroundColor: theme.colors.primary },
                 headerTintColor: 'white',
-                headerTitleStyle: {
-                    fontWeight: 'bold',
-                },
-                headerShown: false,
+                headerTitleStyle: { fontWeight: 'bold' },
+                headerShown: false, // we handle headers per-screen
             }}
         >
             {!isAuthenticated ? (
-                // Authentication Stack
                 <>
                     <Stack.Screen
                         name="auth/login"
-                        options={{
-                            headerShown: false,
-                            animation: 'fade'
-                        }}
+                        options={{ headerShown: false, animation: 'fade' }}
                     />
                     <Stack.Screen
                         name="auth/register"
-                        options={{
-                            headerShown: false,
-                            animation: 'slide_from_right'
-                        }}
+                        options={{ headerShown: false, animation: 'slide_from_right' }}
                     />
+                    <Stack.Screen name="auth/forgot-password" options={{ headerShown: false }} />
+                    <Stack.Screen name="auth/verify-otp" options={{ headerShown: false }} />
+                    <Stack.Screen name="auth/reset-password" options={{ headerShown: false }} />
                 </>
             ) : (
-                // Main App Stack
                 <>
-                    <Stack.Screen name="(tabs)asdf" options={{ headerShown: true, title: "aoeinfaoiwnefoinf" }} />
+                    {/* Main Tabs container */}
                     <Stack.Screen
-                        name="product-detail"
-                        options={{ title: 'Product Details' }}
+                        name="(tabs)"
+                        options={{ headerShown: false }}
                     />
-                    <Stack.Screen
-                        name="service-booking"
-                        options={{ title: 'Book Service' }}
-                    />
-                    <Stack.Screen
-                        name="mechanic-profile"
-                        options={{ title: 'Mechanic Profile' }}
-                    />
-                    <Stack.Screen
-                        name="add-vehicle"
-                        options={{ title: 'Add Vehicle' }}
-                    />
-                    <Stack.Screen
-                        name="vin-scanner"
-                        options={{ title: 'Scan VIN' }}
-                    />
-                    <Stack.Screen
-                        name="manual-vehicle-entry"
-                        options={{ title: 'Enter Vehicle Details' }}
-                    />
-                    <Stack.Screen
-                        name="vehicle-detail"
-                        options={{ title: 'Vehicle Details' }}
-                    />
-                    <Stack.Screen
-                        name="diagnostics-upload"
-                        options={{ title: 'Upload Diagnostics' }}
-                    />
+
+                    {/* Pushed screens */}
+                    <Stack.Screen name="product-detail" options={{ title: 'Product Details' }} />
+                    <Stack.Screen name="service-booking" options={{ title: 'Book Service' }} />
+                    <Stack.Screen name="mechanic-profile" options={{ title: 'Mechanic Profile' }} />
+                    <Stack.Screen name="add-vehicle" options={{ title: 'Add Vehicle' }} />
+                    <Stack.Screen name="vin-scanner" options={{ title: 'Scan VIN' }} />
+                    <Stack.Screen name="manual-vehicle-entry" options={{ title: 'Enter Vehicle Details' }} />
+                    <Stack.Screen name="vehicle-detail" options={{ title: 'Vehicle Details' }} />
+                    <Stack.Screen name="diagnostics-upload" options={{ title: 'Upload Diagnostics' }} />
                 </>
             )}
         </Stack>
@@ -103,9 +80,11 @@ export default function RootLayout() {
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <SafeAreaProvider>
                     <PaperProvider theme={paperTheme}>
-                        <StatusBar style="auto" />
-                        <AppNavigator />
-                        <Toast />
+                        <BottomSheetModalProvider>
+                            <StatusBar style="auto" />
+                            <AppNavigator />
+                            <Toast />
+                        </BottomSheetModalProvider>
                     </PaperProvider>
                 </SafeAreaProvider>
             </GestureHandlerRootView>

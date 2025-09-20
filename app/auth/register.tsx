@@ -1,4 +1,4 @@
-// ===== Register Screen (app/auth/register.tsx) =====
+// app/auth/register.tsx
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -34,40 +34,20 @@ export default function RegisterScreen() {
 
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
-
-        if (!formData.fullName.trim()) {
-            newErrors.fullName = 'Full name is required';
-        }
-
-        if (!formData.email.trim()) {
-            newErrors.email = 'Email is required';
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = 'Please enter a valid email';
-        }
-
-        if (!formData.phoneNumber.trim()) {
-            newErrors.phoneNumber = 'Phone number is required';
-        }
-
-        if (!formData.password) {
-            newErrors.password = 'Password is required';
-        } else if (formData.password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters';
-        }
-
-        if (!formData.confirmPassword) {
-            newErrors.confirmPassword = 'Please confirm your password';
-        } else if (formData.password !== formData.confirmPassword) {
-            newErrors.confirmPassword = 'Passwords do not match';
-        }
-
+        if (!formData.fullName.trim()) newErrors.fullName = 'Full name is required';
+        if (!formData.email.trim()) newErrors.email = 'Email is required';
+        else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Please enter a valid email';
+        if (!formData.phoneNumber.trim()) newErrors.phoneNumber = 'Phone number is required';
+        if (!formData.password) newErrors.password = 'Password is required';
+        else if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+        if (!formData.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
+        else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleRegister = async () => {
         if (!validateForm()) return;
-
         try {
             await register(formData.email, formData.password, formData.fullName, formData.phoneNumber);
         } catch (error) {
@@ -77,203 +57,189 @@ export default function RegisterScreen() {
 
     const updateFormData = (field: string, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
-        if (errors[field]) {
-            setErrors(prev => ({ ...prev, [field]: '' }));
-        }
+        if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
     };
-
-    const ThemeCard = ({ children, style = {} }) => (
-        <View style={[styles.themeCard, theme.shadows.soft, style]}>
-            {children}
-        </View>
-    );
 
     return (
         <SafeAreaView style={styles.container}>
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={styles.keyboardAvoid}
-            >
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.kb}>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <ScrollView
-                        style={styles.scrollView}
-                        contentContainerStyle={styles.scrollContent}
+                        style={styles.scroll}
+                        contentContainerStyle={styles.content}
                         showsVerticalScrollIndicator={false}
                         keyboardShouldPersistTaps="handled"
                     >
-                        {/* Header */}
-                        <View style={styles.header}>
-                            <TouchableOpacity
-                                style={styles.backButton}
-                                onPress={() => router.back()}
-                            >
-                                <Icon name="arrow-back" size={24} color={theme.colors.textPrimary} />
+                        {/* Top bar */}
+                        <View style={styles.topBar}>
+                            <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+                                <Icon name="arrow-back" size={22} color={theme.colors.textPrimary} />
                             </TouchableOpacity>
 
-                            <View style={styles.logo}>
-                                <Icon name="directions-car" size={32} color={theme.colors.primary} />
+                            <View style={styles.brandRow}>
+                                <Icon name="directions-car" size={20} color={theme.colors.textPrimary} />
+                                <Text style={styles.brandText}>AutoGhana</Text>
                             </View>
 
-                            <Text style={styles.title}>Join GearsXXIV</Text>
-                            <Text style={styles.subtitle}>
-                                Create your account to get started
-                            </Text>
+                            <TouchableOpacity onPress={() => router.replace('/auth/login')} style={styles.topAction}>
+                                <Text style={styles.topActionText}>Sign in</Text>
+                            </TouchableOpacity>
                         </View>
 
-                        {/* Form */}
-                        <ThemeCard style={styles.formCard}>
-                            <View style={styles.formContent}>
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>Full Name</Text>
-                                    <TextInput
-                                        mode="outlined"
-                                        value={formData.fullName}
-                                        onChangeText={(text) => updateFormData('fullName', text)}
-                                        placeholder="Enter your full name"
-                                        left={<TextInput.Icon icon="account" />}
-                                        error={!!errors.fullName}
-                                        style={styles.textInput}
-                                    />
-                                    {errors.fullName && (
-                                        <Text style={styles.errorText}>{errors.fullName}</Text>
-                                    )}
-                                </View>
+                        {/* Header */}
+                        <View style={styles.header}>
+                            <Text style={styles.h1}>Create your account</Text>
+                            <Text style={styles.h2}>Join and manage your cars & services</Text>
+                        </View>
 
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>Email Address</Text>
-                                    <TextInput
-                                        mode="outlined"
-                                        value={formData.email}
-                                        onChangeText={(text) => updateFormData('email', text)}
-                                        placeholder="Enter your email"
-                                        keyboardType="email-address"
-                                        autoCapitalize="none"
-                                        left={<TextInput.Icon icon="email" />}
-                                        error={!!errors.email}
-                                        style={styles.textInput}
-                                    />
-                                    {errors.email && (
-                                        <Text style={styles.errorText}>{errors.email}</Text>
-                                    )}
-                                </View>
-
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>Phone Number</Text>
-                                    <TextInput
-                                        mode="outlined"
-                                        value={formData.phoneNumber}
-                                        onChangeText={(text) => updateFormData('phoneNumber', text)}
-                                        placeholder="+233 XX XXX XXXX"
-                                        keyboardType="phone-pad"
-                                        left={<TextInput.Icon icon="phone" />}
-                                        error={!!errors.phoneNumber}
-                                        style={styles.textInput}
-                                    />
-                                    {errors.phoneNumber && (
-                                        <Text style={styles.errorText}>{errors.phoneNumber}</Text>
-                                    )}
-                                </View>
-
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>Password</Text>
-                                    <TextInput
-                                        mode="outlined"
-                                        value={formData.password}
-                                        onChangeText={(text) => updateFormData('password', text)}
-                                        placeholder="Create a password"
-                                        secureTextEntry={!showPassword}
-                                        left={<TextInput.Icon icon="lock" />}
-                                        right={
-                                            <TextInput.Icon
-                                                icon={showPassword ? "eye-off" : "eye"}
-                                                onPress={() => setShowPassword(!showPassword)}
-                                            />
-                                        }
-                                        error={!!errors.password}
-                                        style={styles.textInput}
-                                    />
-                                    {errors.password && (
-                                        <Text style={styles.errorText}>{errors.password}</Text>
-                                    )}
-                                </View>
-
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>Confirm Password</Text>
-                                    <TextInput
-                                        mode="outlined"
-                                        value={formData.confirmPassword}
-                                        onChangeText={(text) => updateFormData('confirmPassword', text)}
-                                        placeholder="Confirm your password"
-                                        secureTextEntry={!showConfirmPassword}
-                                        left={<TextInput.Icon icon="lock-outline" />}
-                                        right={
-                                            <TextInput.Icon
-                                                icon={showConfirmPassword ? "eye-off" : "eye"}
-                                                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                                            />
-                                        }
-                                        error={!!errors.confirmPassword}
-                                        style={styles.textInput}
-                                    />
-                                    {errors.confirmPassword && (
-                                        <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-                                    )}
-                                </View>
-
-                                <Button
-                                    mode="contained"
-                                    onPress={handleRegister}
-                                    loading={isLoading}
-                                    disabled={isLoading}
-                                    style={styles.submitButton}
-                                    contentStyle={styles.submitButtonContent}
-                                    labelStyle={styles.submitButtonLabel}
-                                >
-                                    Create Account
-                                </Button>
-                            </View>
-                        </ThemeCard>
-
-                        {/* Social Login */}
-                        <View style={styles.socialSection}>
-                            <View style={styles.dividerContainer}>
-                                <View style={styles.divider} />
-                                <Text style={styles.dividerText}>or continue with</Text>
-                                <View style={styles.divider} />
+                        {/* Form (flat inputs) */}
+                        <View style={styles.form}>
+                            {/* Full Name */}
+                            <View style={styles.field}>
+                                <Text style={styles.label}>Full Name</Text>
+                                <TextInput
+                                    mode="flat"
+                                    value={formData.fullName}
+                                    onChangeText={(t) => updateFormData('fullName', t)}
+                                    placeholder="e.g., Ama K. Mensah"
+                                    underlineColor="transparent"
+                                    activeUnderlineColor="transparent"
+                                    selectionColor={theme.colors.primary}
+                                    style={styles.input}
+                                    contentStyle={styles.inputContent}
+                                    left={<TextInput.Icon icon="account-outline" />}
+                                    error={!!errors.fullName}
+                                    theme={{ colors: { background: 'transparent' } }}
+                                    dense
+                                />
+                                {!!errors.fullName && <Text style={styles.error}>{errors.fullName}</Text>}
                             </View>
 
-                            <View style={styles.socialButtons}>
-                                <TouchableOpacity style={styles.socialButton}>
-                                    <Icon name="g-translate" size={24} color="#EA4335" />
-                                    <Text style={styles.socialButtonText}>Google</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity style={styles.socialButton}>
-                                    <Icon name="facebook" size={24} color="#1877F2" />
-                                    <Text style={styles.socialButtonText}>Facebook</Text>
-                                </TouchableOpacity>
+                            {/* Email */}
+                            <View style={styles.field}>
+                                <Text style={styles.label}>Email</Text>
+                                <TextInput
+                                    mode="flat"
+                                    value={formData.email}
+                                    onChangeText={(t) => updateFormData('email', t)}
+                                    placeholder="you@example.com"
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    underlineColor="transparent"
+                                    activeUnderlineColor="transparent"
+                                    selectionColor={theme.colors.primary}
+                                    style={styles.input}
+                                    contentStyle={styles.inputContent}
+                                    left={<TextInput.Icon icon="email-outline" />}
+                                    error={!!errors.email}
+                                    theme={{ colors: { background: 'transparent' } }}
+                                    dense
+                                />
+                                {!!errors.email && <Text style={styles.error}>{errors.email}</Text>}
                             </View>
+
+                            {/* Phone */}
+                            <View style={styles.field}>
+                                <Text style={styles.label}>Phone Number</Text>
+                                <TextInput
+                                    mode="flat"
+                                    value={formData.phoneNumber}
+                                    onChangeText={(t) => updateFormData('phoneNumber', t)}
+                                    placeholder="+233 XX XXX XXXX"
+                                    keyboardType="phone-pad"
+                                    underlineColor="transparent"
+                                    activeUnderlineColor="transparent"
+                                    selectionColor={theme.colors.primary}
+                                    style={styles.input}
+                                    contentStyle={styles.inputContent}
+                                    left={<TextInput.Icon icon="phone-outline" />}
+                                    error={!!errors.phoneNumber}
+                                    theme={{ colors: { background: 'transparent' } }}
+                                    dense
+                                />
+                                {!!errors.phoneNumber && <Text style={styles.error}>{errors.phoneNumber}</Text>}
+                            </View>
+
+                            {/* Password */}
+                            <View style={styles.field}>
+                                <Text style={styles.label}>Password</Text>
+                                <TextInput
+                                    mode="flat"
+                                    value={formData.password}
+                                    onChangeText={(t) => updateFormData('password', t)}
+                                    placeholder="Create a password"
+                                    secureTextEntry={!showPassword}
+                                    underlineColor="transparent"
+                                    activeUnderlineColor="transparent"
+                                    selectionColor={theme.colors.primary}
+                                    style={styles.input}
+                                    contentStyle={styles.inputContent}
+                                    left={<TextInput.Icon icon="lock-outline" />}
+                                    right={
+                                        <TextInput.Icon
+                                            icon={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                                            onPress={() => setShowPassword(!showPassword)}
+                                        />
+                                    }
+                                    error={!!errors.password}
+                                    theme={{ colors: { background: 'transparent' } }}
+                                    dense
+                                />
+                                {!!errors.password && <Text style={styles.error}>{errors.password}</Text>}
+                            </View>
+
+                            {/* Confirm Password */}
+                            <View style={styles.field}>
+                                <Text style={styles.label}>Confirm Password</Text>
+                                <TextInput
+                                    mode="flat"
+                                    value={formData.confirmPassword}
+                                    onChangeText={(t) => updateFormData('confirmPassword', t)}
+                                    placeholder="Re-enter your password"
+                                    secureTextEntry={!showConfirmPassword}
+                                    underlineColor="transparent"
+                                    activeUnderlineColor="transparent"
+                                    selectionColor={theme.colors.primary}
+                                    style={styles.input}
+                                    contentStyle={styles.inputContent}
+                                    left={<TextInput.Icon icon="lock-outline" />}
+                                    right={
+                                        <TextInput.Icon
+                                            icon={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
+                                            onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        />
+                                    }
+                                    error={!!errors.confirmPassword}
+                                    theme={{ colors: { background: 'transparent' } }}
+                                    dense
+                                />
+                                {!!errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword}</Text>}
+                            </View>
+
+                            {/* CTA */}
+                            <Button
+                                mode="contained"
+                                onPress={handleRegister}
+                                loading={isLoading}
+                                disabled={isLoading}
+                                style={styles.cta}
+                                contentStyle={styles.ctaContent}
+                                labelStyle={styles.ctaLabel}
+                            >
+                                Create Account
+                            </Button>
                         </View>
 
                         {/* Terms */}
-                        <Text style={styles.termsText}>
+                        <Text style={styles.terms}>
                             By creating an account, you agree to our{' '}
-                            <Text style={styles.linkText}>Terms of Service</Text> and{' '}
-                            <Text style={styles.linkText}>Privacy Policy</Text>
+                            <Text style={styles.link} onPress={() => router.push('/legal/terms')}>Terms of Service</Text> and{' '}
+                            <Text style={styles.link} onPress={() => router.push('/legal/privacy')}>Privacy Policy</Text>.
                         </Text>
 
-                        {/* Login Link */}
-                        <View style={styles.loginLink}>
-                            <Text style={styles.loginText}>
-                                Already have an account?{' '}
-                                <Text
-                                    style={styles.loginLinkText}
-                                    onPress={() => router.push('/auth/login')}
-                                >
-                                    Sign in
-                                </Text>
-                            </Text>
-                        </View>
+                        {/* Bottom space */}
+                        <View style={{ height: theme.spacing.xxxl }} />
                     </ScrollView>
                 </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
@@ -281,171 +247,70 @@ export default function RegisterScreen() {
     );
 }
 
+const INPUT_BG = `${theme.colors.primary}0D`; // ~5% primary tint for subtle fintech shade
+
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: theme.colors.background,
-    },
-    keyboardAvoid: {
-        flex: 1,
-    },
-    scrollView: {
-        flex: 1,
-    },
-    scrollContent: {
-        paddingHorizontal: theme.spacing.xl,
-    },
-    header: {
+    // Page
+    container: { flex: 1, backgroundColor: theme.colors.background },
+    kb: { flex: 1 },
+    scroll: { flex: 1 },
+    content: { paddingHorizontal: theme.spacing.xl },
+
+    // Top bar
+    topBar: {
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
         paddingTop: theme.spacing.lg,
-        paddingBottom: theme.spacing.xl,
-        position: 'relative',
     },
-    backButton: {
-        position: 'absolute',
-        top: theme.spacing.lg,
-        left: 0,
-        padding: theme.spacing.sm,
-        zIndex: 1,
-    },
-    logo: {
-        width: 80,
-        height: 80,
-        borderRadius: theme.borderRadius.xl,
-        backgroundColor: `${theme.colors.primary}15`,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: theme.spacing.xl,
-        marginBottom: theme.spacing.xl,
-    },
-    title: {
+    backBtn: { padding: theme.spacing.sm, marginLeft: -theme.spacing.sm },
+    brandRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    brandText: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, letterSpacing: 0.5 },
+    topAction: { paddingVertical: 6, paddingHorizontal: 8, borderRadius: 16 },
+    topActionText: { color: theme.colors.primary, fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.semibold },
+
+    // Header
+    header: { paddingTop: theme.spacing.xl, paddingBottom: theme.spacing.lg },
+    h1: {
         fontSize: theme.typography?.sizes.heading,
         fontWeight: theme.typography?.weights.semibold,
         color: theme.colors.textPrimary,
-        marginBottom: theme.spacing.md,
-        textAlign: 'center',
     },
-    subtitle: {
+    h2: { marginTop: theme.spacing.xs, fontSize: theme.typography?.sizes.bodyLarge, color: theme.colors.textSecondary },
+
+    // Form
+    form: { marginTop: theme.spacing.lg, gap: theme.spacing.lg },
+    field: { gap: theme.spacing.xs },
+    label: { fontSize: theme.typography?.sizes.caption, color: theme.colors.textSecondary, letterSpacing: 0.3 },
+
+    // Inputs: light bg, no borders, radius, spacing between icon & text
+    input: {
+        backgroundColor: INPUT_BG,
+        borderRadius: theme.borderRadius.lg,
+        height: 60,
+        paddingHorizontal: theme.spacing.md,
+    },
+    inputContent: {
+        paddingLeft: 12,
         fontSize: theme.typography?.sizes.bodyLarge,
-        color: theme.colors.textSecondary,
-        textAlign: 'center',
-        lineHeight: theme.typography?.lineHeights.normal * theme.typography?.sizes.bodyLarge,
     },
 
-    // Card
-    themeCard: {
-        backgroundColor: theme.colors.card,
-        borderRadius: theme.borderRadius.xl,
-        borderWidth: 1,
-        borderColor: theme.colors.lighter,
-        padding: theme.spacing.xl,
-    },
-    formCard: {
-        marginBottom: theme.spacing.xl,
-    },
-    formContent: {
-        gap: theme.spacing.xl,
-    },
+    // Errors
+    error: { fontSize: theme.typography?.sizes.caption, color: theme.colors.error, marginTop: 4 },
 
-    // Form inputs
-    inputGroup: {
-        gap: theme.spacing.md,
-    },
-    inputLabel: {
-        fontSize: theme.typography?.sizes.bodyLarge,
-        fontWeight: theme.typography?.weights.medium,
-        color: theme.colors.textPrimary,
-    },
-    textInput: {
-        backgroundColor: theme.colors.background,
-    },
-    errorText: {
-        fontSize: theme.typography?.sizes.caption,
-        color: theme.colors.error,
-        marginTop: -theme.spacing.sm,
-        marginLeft: theme.spacing.md,
-    },
-
-    // Submit button
-    submitButton: {
-        borderRadius: theme.borderRadius.xl,
-        marginTop: theme.spacing.md,
-    },
-    submitButtonContent: {
-        paddingVertical: theme.spacing.md,
-    },
-    submitButtonLabel: {
-        fontSize: theme.typography?.sizes.bodyLarge,
-        fontWeight: theme.typography?.weights.semibold,
-    },
-
-    // Social login
-    socialSection: {
-        marginBottom: theme.spacing.xl,
-    },
-    dividerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: theme.spacing.xl,
-    },
-    divider: {
-        flex: 1,
-        height: 1,
-        backgroundColor: theme.colors.lighter,
-    },
-    dividerText: {
-        fontSize: theme.typography?.sizes.body,
-        color: theme.colors.textSecondary,
-        marginHorizontal: theme.spacing.lg,
-    },
-    socialButtons: {
-        flexDirection: 'row',
-        gap: theme.spacing.lg,
-    },
-    socialButton: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: theme.spacing.md,
-        paddingVertical: theme.spacing.lg,
-        backgroundColor: theme.colors.white,
-        borderWidth: 1,
-        borderColor: theme.colors.lighter,
-        borderRadius: theme.borderRadius.xl,
-        ...theme.shadows.soft,
-    },
-    socialButtonText: {
-        fontSize: theme.typography?.sizes.bodyLarge,
-        fontWeight: theme.typography?.weights.medium,
-        color: theme.colors.textPrimary,
-    },
+    // CTA
+    cta: { borderRadius: 24, backgroundColor: theme.colors.primary, marginTop: theme.spacing.sm },
+    ctaContent: { paddingVertical: theme.spacing.md },
+    ctaLabel: { color: '#fff', fontSize: theme.typography?.sizes.bodyLarge, fontWeight: theme.typography?.weights.semibold },
 
     // Terms
-    termsText: {
+    terms: {
         fontSize: theme.typography?.sizes.body,
         color: theme.colors.textSecondary,
         textAlign: 'center',
-        lineHeight: theme.typography?.lineHeights.normal * theme.typography?.sizes.body,
+        lineHeight: (theme.typography?.lineHeights.normal ?? 1.4) * (theme.typography?.sizes.body ?? 14),
         paddingHorizontal: theme.spacing.lg,
-        marginBottom: theme.spacing.xl,
+        marginTop: theme.spacing.xl,
     },
-    linkText: {
-        color: theme.colors.primary,
-        fontWeight: theme.typography?.weights.medium,
-    },
-
-    // Login link
-    loginLink: {
-        alignItems: 'center',
-        paddingBottom: theme.spacing.xxxl,
-    },
-    loginText: {
-        fontSize: theme.typography?.sizes.body,
-        color: theme.colors.textSecondary,
-    },
-    loginLinkText: {
-        color: theme.colors.primary,
-        fontWeight: theme.typography?.weights.semibold,
-    },
+    link: { color: theme.colors.primary, fontWeight: theme.typography?.weights.medium },
 });

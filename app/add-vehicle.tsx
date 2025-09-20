@@ -1,40 +1,42 @@
 // app/add-vehicle.tsx
 import { router } from 'expo-router';
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from './(tabs)/theme';
 
+const TINT = `${theme.colors.primary}0D`;
+
 export default function AddVehicleScreen() {
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.headerBar}>
+        <Text style={styles.brand}>Garage</Text>
+        <TouchableOpacity onPress={() => router.back()}><Icon name="close" size={20} color={theme.colors.textSecondary} /></TouchableOpacity>
+      </View>
+
       <View style={styles.content}>
-        <Text style={styles.title}>Add a Vehicle</Text>
+        <Text style={styles.title}>Add a vehicle</Text>
         <Text style={styles.subtitle}>
-          Add your car to your garage to get personalized service reminders and find compatible parts.
+          Keep your garage up to date to get accurate reminders and compatible parts.
         </Text>
 
-        <View style={styles.optionsContainer}>
-          <TouchableOpacity
-            style={styles.optionButton}
-            onPress={() => router.push('/vin-scanner')}
-          >
-            <Icon name="qr-code-scanner" size={48} color="white" />
-            <Text style={styles.optionTitle}>Scan VIN Code</Text>
+        <View style={styles.options}>
+          <TouchableOpacity style={styles.card} onPress={() => router.push('/vin-scanner')}>
+            <View style={[styles.iconWrap, { backgroundColor: `${theme.colors.primary}14` }]}>
+              <Icon name="qr-code-scanner" size={28} color={theme.colors.primary} />
+            </View>
+            <Text style={styles.cardTitle}>Scan VIN Code</Text>
+            <Text style={styles.cardSub}>Use your camera for instant recognition</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.optionButton, styles.outlineButton]}
-            onPress={() => router.push('/manual-vehicle-entry')}
-          >
-            <Icon name="edit" size={48} color={theme.colors.primary} />
-            <Text style={[styles.optionTitle, styles.outlineText]}>Enter Details Manually</Text>
+          <TouchableOpacity style={styles.card} onPress={() => router.push('/manual-vehicle-entry')}>
+            <View style={[styles.iconWrap, { backgroundColor: `${theme.colors.secondary}14` }]}>
+              <Icon name="edit" size={28} color={theme.colors.secondary} />
+            </View>
+            <Text style={styles.cardTitle}>Enter Manually</Text>
+            <Text style={styles.cardSub}>Fill in make, model, year & plate</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -43,54 +45,26 @@ export default function AddVehicleScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
+  container: { flex: 1, backgroundColor: theme.colors.background },
+  headerBar: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingHorizontal: theme.spacing.xl, paddingTop: theme.spacing.lg,
   },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: theme.spacing.lg,
-  },
+  brand: { color: theme.colors.textSecondary, fontSize: theme.typography?.sizes.caption, letterSpacing: 0.3 },
+
+  content: { flex: 1, paddingHorizontal: theme.spacing.xl, paddingTop: theme.spacing.lg },
   title: {
-    fontSize: theme.fontSize.xxl,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
-    textAlign: 'center',
-    marginBottom: theme.spacing.sm,
+    color: theme.colors.textPrimary, fontSize: theme.typography?.sizes.heading,
+    fontWeight: theme.typography?.weights.semibold,
   },
-  subtitle: {
-    fontSize: theme.fontSize.md,
-    color: theme.colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: theme.spacing.xl,
-    paddingHorizontal: theme.spacing.md,
-    lineHeight: 22,
+  subtitle: { color: theme.colors.textSecondary, fontSize: theme.typography?.sizes.bodyLarge, marginTop: 6, marginBottom: theme.spacing.xl },
+
+  options: { gap: theme.spacing.lg },
+  card: {
+    backgroundColor: TINT, borderRadius: theme.borderRadius.xl,
+    padding: theme.spacing.lg, gap: theme.spacing.sm,
   },
-  optionsContainer: {
-    width: '100%',
-    gap: theme.spacing.lg,
-  },
-  optionButton: {
-    backgroundColor: theme.colors.primary,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.xl,
-    alignItems: 'center',
-    gap: theme.spacing.md,
-    ...theme.shadows.medium,
-  },
-  outlineButton: {
-    backgroundColor: theme.colors.surface,
-    borderWidth: 2,
-    borderColor: theme.colors.border,
-  },
-  optionTitle: {
-    fontSize: theme.fontSize.md,
-    fontWeight: theme.fontWeight.semibold,
-    color: 'white',
-  },
-  outlineText: {
-    color: theme.colors.primary,
-  },
+  iconWrap: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  cardTitle: { color: theme.colors.textPrimary, fontWeight: theme.typography?.weights.semibold, fontSize: theme.typography?.sizes.title },
+  cardSub: { color: theme.colors.textSecondary, fontSize: theme.typography?.sizes.body },
 });

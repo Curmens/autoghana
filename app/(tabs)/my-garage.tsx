@@ -1,11 +1,10 @@
 // app/(tabs)/my-garage.tsx
 import { Ionicons } from '@expo/vector-icons';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { router } from 'expo-router';
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
-  FlatList,
   Image,
-  ListRenderItem,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -14,9 +13,15 @@ import {
   View
 } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import { Card, Chip } from 'react-native-paper';
+import { Button, Card, Chip, TextInput } from 'react-native-paper';
+
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from './theme';
+
+type ListRenderItem<T> = ({ item, index }: { item: T; index: number }) => React.ReactElement | null;
+
+
+const INPUT_BG = `${theme.colors.primary}0D`;
 
 interface Vehicle {
   id: string;
@@ -155,17 +160,25 @@ export default function MyGarageScreen() {
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   };
 
+    // Bottom sheet
+  const addSheetRef = useRef<BottomSheetModal>(null);
+  const snapPoints = useMemo(() => ['35%', '70%'], []);
+  const openAddSheet = () => addSheetRef.current?.present();
+  const closeAddSheet = () => addSheetRef.current?.dismiss();
+
+  const [quick, setQuick] = useState({ make: '', model: '', year: '', plate: '' });
+  const onQuickSave = () => {
+    // You can push to manual page with prefilled params or handle inline
+    router.push('/manual-vehicle-entry'); // or keep modal and persist data
+    closeAddSheet();
+  };
+
   const renderFeaturedVehicle = (vehicle: Vehicle) => (
     <Card style={[styles.featuredVehicleCard, { elevation: 0 }]}>
       <View style={styles.featuredVehicleImageWrapper}>
-        <Image
-          source={{ uri: vehicle.image }}
-          style={styles.featuredVehicleImage}
-          resizeMode="cover"
-        />
+        <Image source={{ uri: vehicle.image }} style={styles.featuredVehicleImage} resizeMode="cover" />
         <View style={styles.vehicleOverlay} />
 
-        {/* Vehicle Info Overlay */}
         <View style={styles.vehicleInfo}>
           <View style={styles.vehicleHeader}>
             <View>
@@ -191,22 +204,18 @@ export default function MyGarageScreen() {
               <Text style={styles.statText}>{vehicle.year}</Text>
             </View>
             <View style={styles.statItem}>
-              <Ionicons
-                name={vehicle.fuelType === 'Electric' ? 'flash-outline' : 'car-outline'}
-                size={18}
-                color="#fff"
-              />
+              <Ionicons name={vehicle.fuelType === 'Electric' ? 'flash-outline' : 'car-outline'} size={18} color="#fff" />
               <Text style={styles.statText}>{vehicle.fuelType}</Text>
             </View>
           </View>
 
-          {/* Quick Actions (INSIDE card) */}
+          {/* Inline actions — changed Add to open bottom sheet */}
           <View style={styles.inlineActions}>
-            <TouchableOpacity style={styles.inlineActionButton}>
+            <TouchableOpacity style={styles.inlineActionButton} onPress={() => router.push('/vehicle-detail')}>
               <Ionicons name="build-outline" size={20} color={theme.colors.primary} />
               <Text style={styles.inlineActionText}>Service</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.inlineActionButton}>
+            <TouchableOpacity style={styles.inlineActionButton} onPress={openAddSheet}>
               <Ionicons name="add-circle-outline" size={20} color={theme.colors.primary} />
               <Text style={styles.inlineActionText}>Add</Text>
             </TouchableOpacity>
@@ -221,7 +230,7 @@ export default function MyGarageScreen() {
   );
 
 
-  const renderMaintenanceItem: ListRenderItem<MaintenanceItem> = ({ item, index }) => {
+  const renderMaintenanceItem = ({ item, index }: { item: MaintenanceItem; index: number }) => {
     const vehicleMaintenance = getMaintenanceForVehicle(vehicles[currentPage]?.id || '');
     const isLast = index === vehicleMaintenance.length - 1;
 
@@ -297,6 +306,7 @@ export default function MyGarageScreen() {
   const currentMaintenance = getMaintenanceForVehicle(currentVehicle?.id || '');
 
   return (
+    // <BottomSheetModalProvider>
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={theme.colors.white} />
 
@@ -366,12 +376,11 @@ export default function MyGarageScreen() {
           <Card style={styles.timelineCard}>
             <View style={styles.timelineContainer}>
               {currentMaintenance.length > 0 ? (
-                <FlatList
-                  data={currentMaintenance.slice(0, 4)} // Show only first 4 items
-                  renderItem={renderMaintenanceItem}
-                  keyExtractor={(item) => item.id.toString()}
-                  scrollEnabled={false}
-                />
+                currentMaintenance.slice(0, 4).map((item, index) => (
+                  <View key={item.id}>
+                    {renderMaintenanceItem({ item, index })}
+                  </View>
+                ))
               ) : (
                 <View style={styles.emptyState}>
                   <Ionicons name="construct-outline" size={48} color={theme.colors.border} />
@@ -389,6 +398,88 @@ export default function MyGarageScreen() {
         </View>
       </ScrollView>
 
+      <BottomSheetModal
+          ref={addSheetRef}
+          snapPoints={snapPoints}
+          backgroundStyle={styles.sheetBackground}
+          handleIndicatorStyle={styles.sheetHandle}
+        >
+          <View style={styles.sheetHeader}>
+            <Text style={styles.sheetTitle}>Add a vehicle</Text>
+            <TouchableOpacity onPress={closeAddSheet}><Ionicons name="close" size={20} color={theme.colors.textSecondary} /></TouchableOpacity>
+          </View>
+
+          <View style={styles.sheetRow}>
+            <TouchableOpacity style={styles.sheetOption} onPress={() => { closeAddSheet(); router.push('/vin-scanner'); }}>
+              <Ionicons name="qr-code-outline" size={22} color={theme.colors.primary} />
+              <Text style={styles.sheetOptionText}>Scan VIN</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sheetOption} onPress={() => { closeAddSheet(); router.push('/manual-vehicle-entry'); }}>
+              <Ionicons name="create-outline" size={22} color={theme.colors.primary} />
+              <Text style={styles.sheetOptionText}>Enter manually</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.sheetDivider} />
+
+          <Text style={styles.sheetSub}>Quick add</Text>
+          <View style={styles.quickForm}>
+            <TextInput
+              mode="flat"
+              placeholder="Make"
+              value={quick.make}
+              onChangeText={(t) => setQuick({ ...quick, make: t })}
+              underlineColor="transparent"
+              activeUnderlineColor="transparent"
+              style={styles.input}
+              contentStyle={styles.inputContent}
+              theme={{ colors: { background: 'transparent' } }}
+              dense
+            />
+            <TextInput
+              mode="flat"
+              placeholder="Model"
+              value={quick.model}
+              onChangeText={(t) => setQuick({ ...quick, model: t })}
+              underlineColor="transparent"
+              activeUnderlineColor="transparent"
+              style={styles.input}
+              contentStyle={styles.inputContent}
+              theme={{ colors: { background: 'transparent' } }}
+              dense
+            />
+            <TextInput
+              mode="flat"
+              placeholder="Year"
+              value={quick.year}
+              onChangeText={(t) => setQuick({ ...quick, year: t })}
+              keyboardType="number-pad"
+              underlineColor="transparent"
+              activeUnderlineColor="transparent"
+              style={styles.input}
+              contentStyle={styles.inputContent}
+              theme={{ colors: { background: 'transparent' } }}
+              dense
+            />
+            <TextInput
+              mode="flat"
+              placeholder="Plate"
+              value={quick.plate}
+              onChangeText={(t) => setQuick({ ...quick, plate: t.toUpperCase() })}
+              autoCapitalize="characters"
+              underlineColor="transparent"
+              activeUnderlineColor="transparent"
+              style={styles.input}
+              contentStyle={styles.inputContent}
+              theme={{ colors: { background: 'transparent' } }}
+              dense
+            />
+            <Button mode="contained" onPress={onQuickSave} style={styles.cta} contentStyle={{ paddingVertical: 12 }}>
+              Save
+            </Button>
+          </View>
+        </BottomSheetModal>
+
       {/* Floating Action Button */}
       {/* <View style={styles.fabContainer}>
         <FAB
@@ -401,6 +492,7 @@ export default function MyGarageScreen() {
         />
       </View> */}
     </SafeAreaView>
+    // </BottomSheetModalProvider>
   );
 }
 
@@ -811,5 +903,73 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeight.medium,
     marginLeft: 8,
   },
+
+  // Bottom sheet styles
+  sheetBackground: {
+    backgroundColor: theme.colors.white,
+  },
+  sheetHandle: {
+    backgroundColor: theme.colors.border,
+  },
+  sheetHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,
+  },
+  sheetTitle: {
+    fontSize: theme.fontSize.lg,
+    fontWeight: theme.fontWeight.semibold,
+    color: theme.colors.text,
+  },
+  sheetRow: {
+    flexDirection: 'row',
+    paddingHorizontal: theme.spacing.lg,
+    gap: theme.spacing.md,
+  },
+  sheetOption: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    gap: theme.spacing.sm,
+  },
+  sheetOptionText: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.text,
+    fontWeight: theme.fontWeight.medium,
+  },
+  sheetDivider: {
+    height: 1,
+    backgroundColor: theme.colors.border,
+    marginVertical: theme.spacing.lg,
+    marginHorizontal: theme.spacing.lg,
+  },
+  sheetSub: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.textSecondary,
+    paddingHorizontal: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
+  },
+  quickForm: {
+    paddingHorizontal: theme.spacing.lg,
+    gap: theme.spacing.md,
+  },
+  input: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+  },
+  inputContent: {
+    paddingHorizontal: theme.spacing.md,
+  },
+  cta: {
+    marginTop: theme.spacing.md,
+  },
+
+
+
 
 });

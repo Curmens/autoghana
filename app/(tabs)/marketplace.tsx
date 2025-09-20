@@ -1,7 +1,9 @@
 // app/(tabs)/marketplace.tsx
 import { router } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { FlatList, Image, ListRenderItem, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+type ListRenderItem<T> = ({ item, index }: { item: T; index: number }) => React.ReactElement | null;
 import { Card, Chip, Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -89,7 +91,7 @@ export default function MarketplaceScreen() {
             {/* Title */}
             <View style={styles.headerRow}>
                 <Text style={styles.title}>Marketplace</Text>
-                <TouchableOpacity style={styles.cartBtn} onPress={() => router.push('/cart')}>
+                <TouchableOpacity style={styles.cartBtn} onPress={() => console.log('Cart pressed')}>
                     <Icon name="shopping-cart" size={22} color={theme.colors.text} />
                 </TouchableOpacity>
             </View>
@@ -130,7 +132,7 @@ export default function MarketplaceScreen() {
         </View>
     );
 
-    const renderProductItem: ListRenderItem<Product> = ({ item, index }) => {
+    const renderProductItem = ({ item, index }: { item: Product; index: number }) => {
         const fav = !!favorites[item.id];
         const hasDiscount = item.originalPrice && item.originalPrice > item.price;
         const discountPct = hasDiscount
@@ -195,13 +197,12 @@ export default function MarketplaceScreen() {
         <SafeAreaView style={styles.container}>
             <FlatList
                 data={filtered}
-                renderItem={renderProductItem}
-                keyExtractor={(item) => String(item.id)}
+                renderItem={({ item, index }: { item: Product; index: number }) => renderProductItem({ item, index })}
+                keyExtractor={(item: Product) => String(item.id)}
                 numColumns={2}
-                ListHeaderComponent={renderHeader}
                 contentContainerStyle={styles.listContent}
                 columnWrapperStyle={styles.columnWrapper}
-                showsVerticalScrollIndicator={false}
+                ListHeaderComponent={renderHeader}
             />
         </SafeAreaView>
     );
@@ -295,7 +296,6 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: theme.colors.surface,
         borderRadius: theme.borderRadius.md,
-        overflow: 'hidden',
         ...theme.shadows.small,
     },
     imageWrap: {

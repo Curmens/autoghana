@@ -1,3 +1,4 @@
+// app/(tabs)/_layout.tsx
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { ModernTabBar } from '../components/ModernTabBar';
@@ -41,26 +42,6 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-        }}
-      />
-      
-      {/* Hidden screens */}
-      <Tabs.Screen
-        name="explore"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="home"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="theme"
-        options={{
-          href: null,
         }}
       />
     </Tabs>

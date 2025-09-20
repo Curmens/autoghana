@@ -1,6 +1,11 @@
 // app/(tabs)/my-garage.tsx
 import { Ionicons } from '@expo/vector-icons';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetTextInput,
+  BottomSheetView
+} from '@gorhom/bottom-sheet';
 import { router } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
 import {
@@ -13,7 +18,7 @@ import {
   View
 } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import { Button, Card, Chip, TextInput } from 'react-native-paper';
+import { Button, Card, Chip, FAB } from 'react-native-paper';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from './theme';
@@ -160,16 +165,17 @@ export default function MyGarageScreen() {
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   };
 
-    // Bottom sheet
+  // Bottom sheet
   const addSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ['35%', '70%'], []);
+  const snapPoints = useMemo(() => ['50%'], []); // half-screen
   const openAddSheet = () => addSheetRef.current?.present();
   const closeAddSheet = () => addSheetRef.current?.dismiss();
 
   const [quick, setQuick] = useState({ make: '', model: '', year: '', plate: '' });
+  const [showModal, setShowModal] = useState(false);
+
   const onQuickSave = () => {
-    // You can push to manual page with prefilled params or handle inline
-    router.push('/manual-vehicle-entry'); // or keep modal and persist data
+    console.log('Quick save:', quick);
     closeAddSheet();
   };
 
@@ -215,7 +221,10 @@ export default function MyGarageScreen() {
               <Ionicons name="build-outline" size={20} color={theme.colors.primary} />
               <Text style={styles.inlineActionText}>Service</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.inlineActionButton} onPress={openAddSheet}>
+            <TouchableOpacity style={styles.inlineActionButton} onPress={() => {
+              console.log('Opening bottom sheet');
+              openAddSheet();
+            }}>
               <Ionicons name="add-circle-outline" size={20} color={theme.colors.primary} />
               <Text style={styles.inlineActionText}>Add</Text>
             </TouchableOpacity>
@@ -306,9 +315,9 @@ export default function MyGarageScreen() {
   const currentMaintenance = getMaintenanceForVehicle(currentVehicle?.id || '');
 
   return (
-    // <BottomSheetModalProvider>
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={theme.colors.white} />
+
 
       {/* Header */}
       <View style={styles.header}>
@@ -399,100 +408,114 @@ export default function MyGarageScreen() {
       </ScrollView>
 
       <BottomSheetModal
-          ref={addSheetRef}
-          snapPoints={snapPoints}
-          backgroundStyle={styles.sheetBackground}
-          handleIndicatorStyle={styles.sheetHandle}
-        >
-          <View style={styles.sheetHeader}>
-            <Text style={styles.sheetTitle}>Add a vehicle</Text>
-            <TouchableOpacity onPress={closeAddSheet}><Ionicons name="close" size={20} color={theme.colors.textSecondary} /></TouchableOpacity>
-          </View>
+  ref={addSheetRef}
+  snapPoints={snapPoints}
+  index={0}
+  backdropComponent={(props) => (
+    <BottomSheetBackdrop
+      {...props}
+      appearsOnIndex={0}
+      disappearsOnIndex={-1}
+      pressBehavior="close"
+      opacity={0.35}
+    />
+  )}
+  backgroundStyle={styles.sheetBackground}
+  handleIndicatorStyle={styles.sheetHandle}
+  enablePanDownToClose
+>
+  <BottomSheetView style={styles.bottomSheetContent}>
+    {/* Header */}
+    <View style={styles.sheetHeader}>
+      <Text style={styles.sheetTitle}>Add a vehicle</Text>
+      <TouchableOpacity onPress={closeAddSheet}>
+        <Ionicons name="close" size={20} color={theme.colors.textSecondary} />
+      </TouchableOpacity>
+    </View>
 
-          <View style={styles.sheetRow}>
-            <TouchableOpacity style={styles.sheetOption} onPress={() => { closeAddSheet(); router.push('/vin-scanner'); }}>
-              <Ionicons name="qr-code-outline" size={22} color={theme.colors.primary} />
-              <Text style={styles.sheetOptionText}>Scan VIN</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.sheetOption} onPress={() => { closeAddSheet(); router.push('/manual-vehicle-entry'); }}>
-              <Ionicons name="create-outline" size={22} color={theme.colors.primary} />
-              <Text style={styles.sheetOptionText}>Enter manually</Text>
-            </TouchableOpacity>
-          </View>
+    {/* Quick actions */}
+    <View style={styles.sheetRow}>
+      <TouchableOpacity
+        style={styles.sheetOption}
+        onPress={() => { closeAddSheet(); router.push('/vin-scanner'); }}
+      >
+        <Ionicons name="qr-code-outline" size={22} color={theme.colors.primary} />
+        <Text style={styles.sheetOptionText}>Scan VIN</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.sheetOption}
+        onPress={() => { closeAddSheet(); router.push('/manual-vehicle-entry'); }}
+      >
+        <Ionicons name="create-outline" size={22} color={theme.colors.primary} />
+        <Text style={styles.sheetOptionText}>Enter manually</Text>
+      </TouchableOpacity>
+    </View>
 
-          <View style={styles.sheetDivider} />
+    <View style={styles.sheetDivider} />
 
-          <Text style={styles.sheetSub}>Quick add</Text>
-          <View style={styles.quickForm}>
-            <TextInput
-              mode="flat"
-              placeholder="Make"
-              value={quick.make}
-              onChangeText={(t) => setQuick({ ...quick, make: t })}
-              underlineColor="transparent"
-              activeUnderlineColor="transparent"
-              style={styles.input}
-              contentStyle={styles.inputContent}
-              theme={{ colors: { background: 'transparent' } }}
-              dense
-            />
-            <TextInput
-              mode="flat"
-              placeholder="Model"
-              value={quick.model}
-              onChangeText={(t) => setQuick({ ...quick, model: t })}
-              underlineColor="transparent"
-              activeUnderlineColor="transparent"
-              style={styles.input}
-              contentStyle={styles.inputContent}
-              theme={{ colors: { background: 'transparent' } }}
-              dense
-            />
-            <TextInput
-              mode="flat"
-              placeholder="Year"
-              value={quick.year}
-              onChangeText={(t) => setQuick({ ...quick, year: t })}
-              keyboardType="number-pad"
-              underlineColor="transparent"
-              activeUnderlineColor="transparent"
-              style={styles.input}
-              contentStyle={styles.inputContent}
-              theme={{ colors: { background: 'transparent' } }}
-              dense
-            />
-            <TextInput
-              mode="flat"
-              placeholder="Plate"
-              value={quick.plate}
-              onChangeText={(t) => setQuick({ ...quick, plate: t.toUpperCase() })}
-              autoCapitalize="characters"
-              underlineColor="transparent"
-              activeUnderlineColor="transparent"
-              style={styles.input}
-              contentStyle={styles.inputContent}
-              theme={{ colors: { background: 'transparent' } }}
-              dense
-            />
-            <Button mode="contained" onPress={onQuickSave} style={styles.cta} contentStyle={{ paddingVertical: 12 }}>
-              Save
-            </Button>
-          </View>
-        </BottomSheetModal>
+    {/* Quick add form */}
+    <Text style={styles.sheetSub}>Quick add</Text>
+    <View style={styles.quickForm}>
+      <BottomSheetTextInput
+        placeholder="Make"
+        value={quick.make}
+        onChangeText={(t) => setQuick({ ...quick, make: t })}
+        style={[styles.bsInput, styles.bsInputSpacing]}
+      />
+      <BottomSheetTextInput
+        placeholder="Model"
+        value={quick.model}
+        onChangeText={(t) => setQuick({ ...quick, model: t })}
+        style={[styles.bsInput, styles.bsInputSpacing]}
+      />
+
+      <View style={styles.quickRow}>
+        <BottomSheetTextInput
+          placeholder="Year"
+          value={quick.year}
+          onChangeText={(t) => setQuick({ ...quick, year: t })}
+          keyboardType="number-pad"
+          style={[styles.bsInput, styles.quickHalf]}
+        />
+        <BottomSheetTextInput
+          placeholder="Plate"
+          value={quick.plate}
+          onChangeText={(t) => setQuick({ ...quick, plate: t.toUpperCase() })}
+          autoCapitalize="characters"
+          style={[styles.bsInput, styles.quickHalf]}
+        />
+      </View>
+
+      <View style={styles.bottomSheetActions}>
+        <Button mode="outlined" onPress={closeAddSheet} style={styles.cancelButton}>
+          Cancel
+        </Button>
+        <Button mode="contained" onPress={onQuickSave} style={styles.saveButton}>
+          Quick Save
+        </Button>
+      </View>
+
+      <TouchableOpacity
+        style={styles.fullFormButton}
+        onPress={() => { closeAddSheet(); router.push('/add-vehicle'); }}
+      >
+        <Text style={styles.fullFormText}>Or add complete vehicle details</Text>
+      </TouchableOpacity>
+    </View>
+  </BottomSheetView>
+</BottomSheetModal>
 
       {/* Floating Action Button */}
-      {/* <View style={styles.fabContainer}>
+      <View style={styles.fabContainer}>
         <FAB
           mode="elevated"
           icon="plus"
           label="Add vehicle"
-          onPress={() => router.push('/add-vehicle')}
+          onPress={() => openAddSheet()}
           style={styles.fabModern}
-          rippleColor="rgb(247, 0, 0)"
         />
-      </View> */}
+      </View>
     </SafeAreaView>
-    // </BottomSheetModalProvider>
   );
 }
 
@@ -566,11 +589,15 @@ const styles = StyleSheet.create({
   featuredVehicleCard: {
     height: 220,
     borderRadius: theme.borderRadius.lg,
-    overflow: 'hidden',
     marginBottom: theme.spacing.md,
     backgroundColor: theme.colors.surface,
     // Softer shadow
     ...theme.shadows.small,
+  },
+  featuredVehicleCardContent: {
+    flex: 1,
+    borderRadius: theme.borderRadius.lg,
+    overflow: 'hidden', // Move overflow to inner View
   },
   vehicleOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -905,12 +932,6 @@ const styles = StyleSheet.create({
   },
 
   // Bottom sheet styles
-  sheetBackground: {
-    backgroundColor: theme.colors.white,
-  },
-  sheetHandle: {
-    backgroundColor: theme.colors.border,
-  },
   sheetHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -969,7 +990,111 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.md,
   },
 
+  bottomSheetTitle: {
+    fontSize: theme.fontSize.xl,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.xs,
+  },
+  bottomSheetSubtitle: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.lg,
+  },
+  quickInput: {
+    marginBottom: theme.spacing.md,
+  },
+  quickRow: {
+    flexDirection: 'row',
+    gap: theme.spacing.md,
+  },
+  quickHalf: {
+    flex: 1,
+  },
+  bottomSheetActions: {
+    flexDirection: 'row',
+    gap: theme.spacing.md,
+    marginBottom: theme.spacing.lg,
+  },
+  cancelButton: {
+    flex: 1,
+  },
+  saveButton: {
+    flex: 1,
+  },
+  fullFormButton: {
+    alignItems: 'center',
+    paddingVertical: theme.spacing.md,
+  },
+  fullFormText: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.primary,
+    textDecorationLine: 'underline',
+  },
 
+  // Modal styles
+  modalContainer: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: theme.spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
+  },
+  modalTitle: {
+    fontSize: theme.fontSize.xl,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.colors.text,
+  },
+  closeButton: {
+    fontSize: 20,
+    color: theme.colors.textSecondary,
+    padding: theme.spacing.sm,
+  },
+  modalContent: {
+    flex: 1,
+    padding: theme.spacing.lg,
+  },
+  modalSubtitle: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.lg,
+  },
 
+  sheetBackground: {
+  backgroundColor: theme.colors.white,
+  borderTopLeftRadius: 20,
+  borderTopRightRadius: 20,
+},
+sheetHandle: {
+  backgroundColor: theme.colors.border,
+  width: 40,
+  height: 4,
+  borderRadius: 2,
+  alignSelf: 'center',
+},
+
+bottomSheetContent: {
+  flex: 1,
+  paddingHorizontal: theme.spacing.lg,
+  paddingBottom: theme.spacing.lg,
+},
+
+// Flat, airy inputs inside the sheet
+bsInput: {
+  backgroundColor: `${theme.colors.primary}0D`, // light tint
+  borderRadius: theme.borderRadius.md,
+  paddingHorizontal: theme.spacing.md,
+  paddingVertical: 12,
+  fontSize: theme.fontSize.sm,
+  color: theme.colors.text,
+},
+bsInputSpacing: {
+  marginBottom: theme.spacing.md,
+},
 
 });

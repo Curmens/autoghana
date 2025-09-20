@@ -1,11 +1,11 @@
-// app/(tabs)/profile.tsx - Updated with Theme theme
+// app/(tabs)/profile.tsx — Premium modern profile (flat styles)
 import { router } from 'expo-router';
-import React from "react";
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Avatar } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Icon from "react-native-vector-icons/MaterialIcons";
-import { theme } from "./theme";
+import React from 'react';
+import { Alert, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Avatar } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { theme } from './theme';
 
 interface ProfileMenuItem {
     id: string;
@@ -18,281 +18,155 @@ interface ProfileMenuItem {
 }
 
 export default function ProfileScreen() {
-
     const user = {
         name: 'Kofi Asante',
         email: 'kofi.asante@example.com',
-        phone: '+233 24 123 4567',
-        location: 'Accra, Greater Accra',
         memberSince: 'Member since 2024',
-        profileImage: 'https://via.placeholder.com/120x120',
-        stats: {
-            vehicles: 2,
-            services: 8,
-            reviews: 5,
-        }
+        profileImage: 'https://images.pexels.com/photos/2794503/pexels-photo-2794503.jpeg',
+        profileBackground: 'https://images.pexels.com/photos/1077785/pexels-photo-1077785.jpeg',
+        stats: { vehicles: 2, services: 8, reviews: 5 },
+        verified: true,
+        tier: 'Premium',
     };
 
     const profileMenuItems: ProfileMenuItem[] = [
-        {
-            id: 'edit-profile',
-            title: 'Edit Profile',
-            subtitle: 'Update your personal information',
-            icon: 'edit',
-            action: () => console.log('Edit profile'),
-            showArrow: true,
-        },
-        {
-            id: 'my-garage',
-            title: 'My Garage',
-            subtitle: `${user.stats.vehicles} vehicles`,
-            icon: 'directions-car',
-            action: () => router.push('/(tabs)/my-garage'),
-            showArrow: true,
-        },
-        {
-            id: 'service-history',
-            title: 'Service History',
-            subtitle: `${user.stats.services} completed services`,
-            icon: 'history',
-            action: () => console.log('Service history'),
-            showArrow: true,
-        },
-        {
-            id: 'reviews',
-            title: 'My Reviews',
-            subtitle: `${user.stats.reviews} reviews written`,
-            icon: 'star',
-            action: () => console.log('My reviews'),
-            showArrow: true,
-        },
+        { id: 'edit-profile', title: 'Edit Profile', subtitle: 'Update your personal information', icon: 'edit', action: () => console.log('Edit profile'), showArrow: true },
+        { id: 'my-garage', title: 'My Garage', subtitle: `${user.stats.vehicles} vehicles`, icon: 'directions-car', action: () => router.push('/(tabs)/my-garage'), showArrow: true },
+        { id: 'service-history', title: 'Service History', subtitle: `${user.stats.services} completed`, icon: 'history', action: () => console.log('Service history'), showArrow: true },
+        { id: 'reviews', title: 'My Reviews', subtitle: `${user.stats.reviews} reviews`, icon: 'star', action: () => console.log('My reviews'), showArrow: true },
     ];
 
     const settingsMenuItems: ProfileMenuItem[] = [
-        {
-            id: 'notifications',
-            title: 'Notifications',
-            subtitle: 'Manage your notification preferences',
-            icon: 'notifications',
-            action: () => console.log('Notifications'),
-            showArrow: true,
-        },
-        {
-            id: 'privacy',
-            title: 'Privacy & Security',
-            subtitle: 'Control your privacy settings',
-            icon: 'privacy-tip',
-            action: () => console.log('Privacy'),
-            showArrow: true,
-        },
-        {
-            id: 'payment',
-            title: 'Payment Methods',
-            subtitle: 'Manage your payment options',
-            icon: 'payment',
-            action: () => console.log('Payment'),
-            showArrow: true,
-        },
-        {
-            id: 'help',
-            title: 'Help & Support',
-            subtitle: 'Get help when you need it',
-            icon: 'help',
-            action: () => console.log('Help'),
-            showArrow: true,
-        },
+        { id: 'notifications', title: 'Notifications', subtitle: 'Push, email & SMS', icon: 'notifications', action: () => console.log('Notifications'), showArrow: true },
+        { id: 'privacy', title: 'Privacy & Security', subtitle: 'Passwords, 2FA, data', icon: 'privacy-tip', action: () => console.log('Privacy'), showArrow: true },
+        { id: 'payment', title: 'Payment Methods', subtitle: 'Cards & mobile money', icon: 'payment', action: () => console.log('Payment'), showArrow: true },
+        { id: 'help', title: 'Help & Support', subtitle: 'FAQ & contact', icon: 'help', action: () => console.log('Help'), showArrow: true },
     ];
 
     const accountMenuItems: ProfileMenuItem[] = [
-        {
-            id: 'terms',
-            title: 'Terms of Service',
-            icon: 'description',
-            action: () => console.log('Terms'),
-            showArrow: true,
-        },
-        {
-            id: 'privacy-policy',
-            title: 'Privacy Policy',
-            icon: 'policy',
-            action: () => console.log('Privacy Policy'),
-            showArrow: true,
-        },
+        { id: 'terms', title: 'Terms of Service', icon: 'description', action: () => console.log('Terms'), showArrow: true },
+        { id: 'privacy-policy', title: 'Privacy Policy', icon: 'policy', action: () => console.log('Privacy Policy'), showArrow: true },
         {
             id: 'logout',
             title: 'Log Out',
             icon: 'logout',
             action: async () => {
-                Alert.alert(
-                    'Sign Out',
-                    'Are you sure you want to sign out?',
-                    [
-                        { text: 'Cancel', style: 'cancel' },
-                        {
-                            text: 'Sign Out',
-                            style: 'destructive',
-                            onPress: async () => {
-                                await logout();
-                            }
-                        }
-                    ]
-                );
+                Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
+                    { text: 'Cancel', style: 'cancel' },
+                    { text: 'Sign Out', style: 'destructive', onPress: async () => { await logout(); } },
+                ]);
             },
-            type: 'danger' as const,
-        }
+            type: 'danger',
+        },
     ];
 
-    type ShadowType = keyof typeof theme.shadows;
+    const ThemeCard = ({ children, style = {}, shadow = 'small' as keyof typeof theme.shadows }) => (
+        <View style={[styles.cardBase, theme.shadows[shadow], style]}>{children}</View>
+    );
 
-    const ThemeCard = ({
-        children,
-        style = {},
-        shadow = 'soft',
-    }: { children: React.ReactNode; style?: object; shadow?: ShadowType }) => (
-        <View style={[styles.themeCard, theme.shadows[shadow], style]}>
+    const Section = ({ title, children }: { title?: string; children: React.ReactNode }) => (
+        <View style={styles.sectionWrap}>
+            {title ? <Text style={styles.sectionTitle}>{title}</Text> : null}
             {children}
         </View>
     );
 
-    const MenuSection = ({ title, items }: { title?: string; items: ProfileMenuItem[] }) => (
-        <View style={styles.menuSection}>
-            {title && <Text style={styles.sectionTitle}>{title}</Text>}
-            <ThemeCard>
-                {items.map((item, index) => (
-                    <View key={item.id}>
-                        <TouchableOpacity
-                            style={styles.menuItem}
-                            onPress={item.action}
-                            activeOpacity={0.7}
-                        >
-                            <View style={[
-                                styles.menuIconContainer,
-                                item.type === 'danger' && styles.dangerIconContainer
-                            ]}>
-                                <Icon
-                                    name={item.icon}
-                                    size={24}
-                                    color={item.type === 'danger' ? theme.colors.error : theme.colors.primary}
-                                />
-                            </View>
-
-                            <View style={styles.menuContent}>
-                                <Text style={[
-                                    styles.menuTitle,
-                                    item.type === 'danger' && styles.dangerText
-                                ]}>
-                                    {item.title}
-                                </Text>
-                                {item.subtitle && (
-                                    <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
-                                )}
-                            </View>
-
-                            {item.showArrow && (
-                                <Icon
-                                    name="chevron-right"
-                                    size={24}
-                                    color={theme.colors.textSecondary}
-                                />
-                            )}
-                        </TouchableOpacity>
-
-                        {index < items.length - 1 && <View style={styles.menuDivider} />}
-                    </View>
-                ))}
-            </ThemeCard>
-        </View>
+    const MenuList = ({ items }: { items: ProfileMenuItem[] }) => (
+        <ThemeCard style={styles.menuCard}>
+            {items.map((item, idx) => (
+                <View key={item.id}>
+                    <TouchableOpacity style={styles.menuItem} onPress={item.action} activeOpacity={0.75}>
+                        <View style={[styles.menuIconPill, item.type === 'danger' ? styles.menuIconPillDanger : styles.menuIconPillDefault]}>
+                            <Icon name={item.icon} size={20} color={item.type === 'danger' ? theme.colors.error : theme.colors.primary} />
+                        </View>
+                        <View style={styles.menuTextCol}>
+                            <Text style={[styles.menuTitle, item.type === 'danger' && styles.menuTitleDanger]}>{item.title}</Text>
+                            {!!item.subtitle && <Text style={styles.menuSubtitle}>{item.subtitle}</Text>}
+                        </View>
+                        {item.showArrow && <Icon name="chevron-right" size={22} color={theme.colors.textSecondary} />}
+                    </TouchableOpacity>
+                    {idx < items.length - 1 && <View style={styles.menuDivider} />}
+                </View>
+            ))}
+        </ThemeCard>
     );
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-                {/* Header */}
-                <View style={styles.header}>
-                    <Text style={styles.headerTitle}>Profile</Text>
-                    <TouchableOpacity style={styles.settingsButton}>
-                        <Icon name="settings" size={24} color={theme.colors.textSecondary} />
-                    </TouchableOpacity>
-                </View>
+            <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 
-                {/* Profile Card */}
-                <ThemeCard style={styles.profileCard} shadow="medium">
-                    <View style={styles.profileHeader}>
-                        <Avatar.Image
-                            size={80}
-                            source={{ uri: user.profileImage }}
-                            style={styles.avatar}
-                        />
-
-                        <View style={styles.profileInfo}>
-                            <Text style={styles.userName}>{user.name}</Text>
-                            <Text style={styles.userEmail}>{user.email}</Text>
-                            <Text style={styles.memberSince}>{user.memberSince}</Text>
+                {/* HERO */}
+                <View style={styles.heroWrap}>
+                    <ImageBackground
+                        source={{ uri: user.profileBackground }}
+                        style={styles.heroImage}
+                        imageStyle={styles.heroImageRadius}
+                    >
+                        <View style={styles.heroOverlay} />
+                        <View style={styles.heroTopBar}>
+                            <Text style={styles.heroTitle}>Profile</Text>
+                            <TouchableOpacity style={styles.iconBtn}>
+                                <Icon name="settings" size={20} color={theme.colors.text} />
+                            </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity style={styles.editButton}>
-                            <Icon name="edit" size={20} color={theme.colors.primary} />
+                        <View style={styles.heroFooter}>
+                            <View style={styles.avatarWrap}>
+                                <Avatar.Image size={84} source={{ uri: user.profileImage }} />
+                                <View style={styles.avatarRing} />
+                                <TouchableOpacity style={styles.avatarEditBtn} activeOpacity={0.8}>
+                                    <Icon name="photo-camera" size={16} color="#fff" />
+                                </TouchableOpacity>
+                            </View>
+
+                            <View style={styles.identityCol}>
+                                <View style={styles.nameRow}>
+                                    <Text style={styles.nameText}>{user.name}</Text>
+                                    {user.verified && (
+                                        <View style={styles.verifiedPill}>
+                                            <Icon name="verified" size={14} color="#fff" />
+                                            <Text style={styles.verifiedText}>Verified</Text>
+                                        </View>
+                                    )}
+                                </View>
+                                <Text style={styles.emailText}>{user.email}</Text>
+                                <Text style={styles.memberText}>{user.memberSince}</Text>
+                            </View>
+                        </View>
+                    </ImageBackground>
+                </View>
+
+                {/* QUICK ACTIONS */}
+                <Section>
+                    <View style={styles.quickRow}>
+                        <TouchableOpacity style={[styles.quickCard, theme.shadows.small]} onPress={() => router.push('/service-booking')} activeOpacity={0.85}>
+                            <Icon name="build" size={22} color={theme.colors.primary} />
+                            <Text style={styles.quickText}>Book Service</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.quickCard, theme.shadows.small]} onPress={() => router.push('/(tabs)/reports')} activeOpacity={0.85}>
+                            <Icon name="report" size={22} color={theme.colors.primary} />
+                            <Text style={styles.quickText}>Report Issue</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.quickCard, theme.shadows.small]} onPress={() => router.push('/(tabs)/my-garage')} activeOpacity={0.85}>
+                            <Icon name="garage" size={22} color={theme.colors.primary} />
+                            <Text style={styles.quickText}>My Garage</Text>
                         </TouchableOpacity>
                     </View>
+                </Section>
 
-                    <View style={styles.statsContainer}>
-                        <View style={styles.statItem}>
-                            <Text style={styles.statValue}>{user.stats.vehicles}</Text>
-                            <Text style={styles.statLabel}>Vehicles</Text>
-                        </View>
+                {/* MENUS */}
+                <Section>
+                    <MenuList items={profileMenuItems} />
+                </Section>
+                <Section title="Settings">
+                    <MenuList items={settingsMenuItems} />
+                </Section>
+                <Section title="Legal & Account">
+                    <MenuList items={accountMenuItems} />
+                </Section>
 
-                        <View style={styles.statDivider} />
-
-                        <View style={styles.statItem}>
-                            <Text style={styles.statValue}>{user.stats.services}</Text>
-                            <Text style={styles.statLabel}>Services</Text>
-                        </View>
-
-                        <View style={styles.statDivider} />
-
-                        <View style={styles.statItem}>
-                            <Text style={styles.statValue}>{user.stats.reviews}</Text>
-                            <Text style={styles.statLabel}>Reviews</Text>
-                        </View>
-                    </View>
-                </ThemeCard>
-
-                {/* Quick Actions */}
-                <View style={styles.quickActions}>
-                    <TouchableOpacity
-                        style={styles.quickActionCard}
-                        onPress={() => router.push('/service-booking')}
-                    >
-                        <Icon name="build" size={24} color={theme.colors.primary} />
-                        <Text style={styles.quickActionText}>Book Service</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.quickActionCard}
-                        onPress={() => router.push('/(tabs)/marketplace')}
-                    >
-                        <Icon name="shopping-cart" size={24} color={theme.colors.primary} />
-                        <Text style={styles.quickActionText}>Shop Parts</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.quickActionCard}
-                        onPress={() => router.push('/(tabs)/reports')}
-                    >
-                        <Icon name="report" size={24} color={theme.colors.primary} />
-                        <Text style={styles.quickActionText}>Report Issue</Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Menu Sections */}
-                <MenuSection items={profileMenuItems} />
-
-                <MenuSection title="Settings" items={settingsMenuItems} />
-
-                <MenuSection title="Legal & Account" items={accountMenuItems} />
-
-                {/* App Version */}
-                <View style={styles.versionContainer}>
+                {/* VERSION */}
+                <View style={styles.versionWrap}>
                     <Text style={styles.versionText}>AutoGhana v1.0.0</Text>
                 </View>
             </ScrollView>
@@ -301,198 +175,80 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: theme.colors.background,
-    },
-    scrollView: {
-        flex: 1,
-    },
+    // Layout
+    container: { flex: 1, backgroundColor: theme.colors.background },
+    scroll: { flex: 1 },
 
-    // Header
-    header: {
+    // Hero
+    heroWrap: { paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.lg },
+    heroImage: { height: 180, borderRadius: theme.borderRadius.xl, overflow: 'hidden' },
+    heroImageRadius: { borderRadius: theme.borderRadius.xl },
+    heroOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.25)' },
+    heroTopBar: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        paddingHorizontal: theme.spacing.lg,
+        paddingTop: theme.spacing.lg,
         alignItems: 'center',
-        paddingHorizontal: theme.spacing.xl,
-        paddingVertical: theme.spacing.lg,
     },
-    headerTitle: {
-        fontSize: theme.typography?.sizes.heading,
-        fontWeight: theme.typography?.weights.semibold,
-        color: theme.colors.textPrimary,
-    },
-    settingsButton: {
-        padding: theme.spacing.sm,
-    },
+    heroTitle: { color: '#fff', fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.semibold },
+    iconBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
 
-    // Card Base
-    themeCard: {
-        backgroundColor: theme.colors.card,
-        borderRadius: theme.borderRadius.xl,
-        borderWidth: 1,
-        borderColor: theme.colors.lighter,
-        padding: theme.spacing.xl,
-        marginHorizontal: theme.spacing.xl,
-    },
-
-    // Profile Card
-    profileCard: {
-        marginBottom: theme.spacing.xl,
-    },
-    profileHeader: {
+    heroFooter: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: theme.spacing.xl,
+        paddingHorizontal: theme.spacing.lg,
+        marginTop: 'auto',
+        paddingBottom: theme.spacing.lg,
     },
-    avatar: {
-        marginRight: theme.spacing.lg,
+    avatarWrap: { width: 84, height: 84, borderRadius: 42, overflow: 'visible' },
+    avatarRing: {
+        position: 'absolute', top: -2, left: -2, right: -2, bottom: -2, borderRadius: 44,
+        borderWidth: 2, borderColor: '#fff',
     },
-    profileInfo: {
-        flex: 1,
+    avatarEditBtn: {
+        position: 'absolute', right: -2, bottom: -2, width: 28, height: 28, borderRadius: 14,
+        backgroundColor: theme.colors.primary, alignItems: 'center', justifyContent: 'center',
+        borderWidth: 2, borderColor: '#fff',
     },
-    userName: {
-        fontSize: theme.typography?.sizes.titleLarge,
-        fontWeight: theme.typography?.weights.semibold,
-        color: theme.colors.textPrimary,
-        marginBottom: theme.spacing.xs,
-    },
-    userEmail: {
-        fontSize: theme.typography?.sizes.body,
-        color: theme.colors.textSecondary,
-        marginBottom: theme.spacing.xs,
-    },
-    memberSince: {
-        fontSize: theme.typography?.sizes.caption,
-        color: theme.colors.textSecondary,
-    },
-    editButton: {
-        width: 40,
-        height: 40,
-        borderRadius: theme.borderRadius.round,
-        backgroundColor: theme.colors.lightest,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    statsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        paddingTop: theme.spacing.xl,
-        borderTopWidth: 1,
-        borderTopColor: theme.colors.lightest,
-    },
-    statItem: {
-        alignItems: 'center',
-    },
-    statValue: {
-        fontSize: theme.typography?.sizes.titleLarge,
-        fontWeight: theme.typography?.weights.semibold,
-        color: theme.colors.primary,
-        marginBottom: theme.spacing.xs,
-    },
-    statLabel: {
-        fontSize: theme.typography?.sizes.caption,
-        color: theme.colors.textSecondary,
-        textAlign: 'center',
-    },
-    statDivider: {
-        width: 1,
-        height: 40,
-        backgroundColor: theme.colors.lightest,
-    },
+    identityCol: { flex: 1, marginLeft: theme.spacing.md },
+    nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    nameText: { color: '#fff', fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.semibold },
+    verifiedPill: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(255,255,255,0.25)', paddingHorizontal: 8, height: 24, borderRadius: 12 },
+    verifiedText: { color: '#fff', fontSize: theme.fontSize.xs, fontWeight: theme.fontWeight.medium },
+    emailText: { color: '#f2f2f2', fontSize: theme.fontSize.xs, marginTop: 2 },
+    memberText: { color: '#eaeaea', fontSize: theme.fontSize.xs, marginTop: 2 },
+    
+    // Buttons
+    primaryBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: theme.colors.primary, paddingHorizontal: 14, height: 44, borderRadius: 22 },
+    primaryBtnText: { color: '#fff', fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.semibold },
+    secondaryBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: theme.colors.surface, paddingHorizontal: 14, height: 44, borderRadius: 22, borderWidth: 1, borderColor: theme.colors.lighter },
+    secondaryBtnText: { color: theme.colors.primary, fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.semibold },
 
-    // Quick Actions
-    quickActions: {
-        flexDirection: 'row',
-        paddingHorizontal: theme.spacing.xl,
-        marginBottom: theme.spacing.xl,
-        gap: theme.spacing.md,
-    },
-    quickActionCard: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: theme.spacing.lg,
-        backgroundColor: theme.colors.card,
-        borderRadius: theme.borderRadius.xl,
-        borderWidth: 1,
-        borderColor: theme.colors.lighter,
-        gap: theme.spacing.sm,
-        ...theme.shadows.soft,
-    },
-    quickActionText: {
-        fontSize: theme.typography?.sizes.body,
-        fontWeight: theme.typography?.weights.medium,
-        color: theme.colors.textPrimary,
-    },
+    // Quick actions
+    sectionWrap: { marginTop: theme.spacing.lg, paddingHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg },
+    sectionTitle: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.semibold, color: theme.colors.text, marginBottom: theme.spacing.sm },
+    quickRow: { flexDirection: 'row', gap: theme.spacing.md },
+    quickCard: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: theme.spacing.lg, backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.lg, borderWidth: 1, borderColor: theme.colors.lighter },
+    quickText: { fontSize: theme.fontSize.sm, color: theme.colors.text, fontWeight: theme.fontWeight.medium },
 
-    // Menu Sections
-    menuSection: {
-        marginBottom: theme.spacing.xl,
-    },
-    sectionTitle: {
-        fontSize: theme.typography?.sizes.title,
-        fontWeight: theme.typography?.weights.semibold,
-        color: theme.colors.textPrimary,
-        marginBottom: theme.spacing.lg,
-        paddingHorizontal: theme.spacing.xl,
-    },
-    menuItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: theme.spacing.lg,
-    },
-    menuIconContainer: {
-        width: 48,
-        height: 48,
-        borderRadius: theme.borderRadius.xl,
-        backgroundColor: `${theme.colors.primary}15`,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: theme.spacing.lg,
-    },
-    dangerIconContainer: {
-        backgroundColor: `${theme.colors.error}15`,
-    },
-    menuContent: {
-        flex: 1,
-    },
-    menuTitle: {
-        fontSize: theme.typography?.sizes.bodyLarge,
-        fontWeight: theme.typography?.weights.medium,
-        color: theme.colors.textPrimary,
-        marginBottom: theme.spacing.xs,
-    },
-    dangerText: {
-        color: theme.colors.error,
-    },
-    menuSubtitle: {
-        fontSize: theme.typography?.sizes.body,
-        color: theme.colors.textSecondary,
-    },
-    menuDivider: {
-        height: 1,
-        backgroundColor: theme.colors.lightest,
-        marginLeft: 64, // Align with content
-    },
+    // Menus
+    menuCard: { paddingHorizontal: theme.spacing.lg, paddingVertical: 0, borderRadius: theme.borderRadius.xl, backgroundColor: theme.colors.card, borderWidth: 1, borderColor: theme.colors.lighter },
+    menuItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: theme.spacing.lg },
+    menuIconPill: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', marginRight: theme.spacing.lg, borderWidth: 1 },
+    menuIconPillDefault: { backgroundColor: `${theme.colors.primary}10`, borderColor: `${theme.colors.primary}40` },
+    menuIconPillDanger: { backgroundColor: `${theme.colors.error}10`, borderColor: `${theme.colors.error}40` },
+    menuTextCol: { flex: 1 },
+    menuTitle: { fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.medium, color: theme.colors.text },
+    menuTitleDanger: { color: theme.colors.error },
+    menuSubtitle: { fontSize: theme.fontSize.xs, color: theme.colors.textSecondary, marginTop: 2 },
+    menuDivider: { height: 1, backgroundColor: theme.colors.lightest, marginLeft: 56 },
 
     // Version
-    versionContainer: {
-        alignItems: 'center',
-        paddingVertical: theme.spacing.xl,
-        marginBottom: theme.spacing.xl,
-    },
-    versionText: {
-        fontSize: theme.typography?.sizes.caption,
-        color: theme.colors.textSecondary,
-    },
+    versionWrap: { alignItems: 'center', paddingVertical: theme.spacing.xl },
+    versionText: { fontSize: theme.fontSize.xs, color: theme.colors.textSecondary },
 });
 
 async function logout() {
-    // Clear user session/token here if using async storage or secure store
-    // For example, using AsyncStorage:
-    // await AsyncStorage.removeItem('userToken');
-
-    // Navigate to login or welcome screen
     router.replace('/auth/login');
 }

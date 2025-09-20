@@ -1,16 +1,8 @@
-// app/(tabs)/marketplace.tsx - Fixed with proper theme usage
+// app/(tabs)/marketplace.tsx
 import { router } from 'expo-router';
-import React from 'react';
-import {
-    FlatList,
-    Image,
-    ListRenderItem,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
-import { Card, Searchbar } from 'react-native-paper';
+import React, { useMemo, useState } from 'react';
+import { FlatList, Image, ListRenderItem, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Card, Chip, Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from './theme';
@@ -18,142 +10,341 @@ import { theme } from './theme';
 interface Product {
     id: number;
     name: string;
-    price: string;
-    originalPrice?: string;
+    price: number;
+    originalPrice?: number;
     rating: number;
     reviewCount: number;
     image: string;
     seller: string;
+    category: string;
 }
 
-export default function MarketplaceScreen() {
-    const [searchQuery, setSearchQuery] = React.useState('');
+const CATEGORIES = ['All', 'Engine', 'Filters', 'Electrical', 'Tyres', 'Interior'];
 
-    const products: Product[] = [
+export default function MarketplaceScreen() {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeCat, setActiveCat] = useState('All');
+    const [favorites, setFavorites] = useState<Record<number, boolean>>({});
+
+    const products: Product[] = useMemo(() => [
         {
             id: 1,
             name: 'NGK Spark Plugs - Set of 4',
-            price: '150',
-            originalPrice: '180',
+            price: 150,
+            originalPrice: 180,
             rating: 4.8,
             reviewCount: 245,
-            image: 'https://via.placeholder.com/200x150',
+            image: 'https://media.istockphoto.com/id/637294322/photo/holding-old-and-new-car-spark-plugs-on-engine.jpg?s=1024x1024&w=is&k=20&c=utjoMwhPWQ80qxj-PZomUFFKiILZ14KlqFU2ZAAYo9k=',
             seller: 'AutoParts Ghana',
+            category: 'Engine',
         },
         {
             id: 2,
             name: 'Bosch Air Filter',
-            price: '220',
-            originalPrice: '250',
+            price: 220,
+            originalPrice: 250,
             rating: 4.9,
             reviewCount: 132,
-            image: 'https://via.placeholder.com/200x150',
+            image: 'https://images.pexels.com/photos/18180571/pexels-photo-18180571.jpeg',
             seller: 'Bosch Official Store',
+            category: 'Filters',
         },
-    ];
+        {
+            id: 3,
+            name: '12V Car Battery 60Ah',
+            price: 950,
+            rating: 4.7,
+            reviewCount: 78,
+            image: 'https://media.istockphoto.com/id/1596813342/photo/a-car-mechanic-installs-a-battery-in-a-car-battery-replacement-and-repair.jpg?s=1024x1024&w=is&k=20&c=6l2eA2c9RNEjiVNlADveB16YvKDBJuL23wYzHclb0nQ=',
+            seller: 'VoltPro',
+            category: 'Electrical',
+        },
+        {
+            id: 4,
+            name: 'All-Weather Floor Mats (Set)',
+            price: 320,
+            originalPrice: 360,
+            rating: 4.6,
+            reviewCount: 56,
+            image: 'https://images.pexels.com/photos/17710774/pexels-photo-17710774.jpeg',
+            seller: 'Innen',
+            category: 'Interior',
+        },
+    ], []);
 
-    const renderProductItem: ListRenderItem<Product> = ({ item }) => (
-        <TouchableOpacity
-            style={styles.productItem}
-            onPress={() => router.push(`/product-detail?productId=${item.id}`)}
-        >
-            <Card style={styles.productCard}>
-                <Image source={{ uri: item.image }} style={styles.productImage} />
-                <Card.Content style={styles.productContent}>
-                    <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
-                    <View style={styles.priceRow}>
-                        <Text style={styles.price}>GH₵{item.price}</Text>
-                        {item.originalPrice && (
-                            <Text style={styles.originalPrice}>GH₵{item.originalPrice}</Text>
-                        )}
-                    </View>
-                    <View style={styles.ratingRow}>
-                        <Icon name="star" size={16} color={theme.colors.warning} />
-                        <Text style={styles.rating}>{item.rating}</Text>
-                        <Text style={styles.reviewCount}>({item.reviewCount})</Text>
-                    </View>
-                    <Text style={styles.seller} numberOfLines={1}>{item.seller}</Text>
-                </Card.Content>
-            </Card>
-        </TouchableOpacity>
-    );
+    const filtered = useMemo(() => {
+        const q = searchQuery.trim().toLowerCase();
+        return products.filter(p => {
+            const matchCat = activeCat === 'All' || p.category === activeCat;
+            const matchQ = !q || p.name.toLowerCase().includes(q) || p.seller.toLowerCase().includes(q);
+            return matchCat && matchQ;
+        });
+    }, [activeCat, searchQuery, products]);
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>Marketplace</Text>
+    const toggleFav = (id: number) =>
+        setFavorites(prev => ({ ...prev, [id]: !prev[id] }));
+
+    const renderHeader = () => (
+        <View>
+            {/* Title */}
+            <View style={styles.headerRow}>
+                <Text style={styles.title}>Marketplace</Text>
+                <TouchableOpacity style={styles.cartBtn} onPress={() => router.push('/cart')}>
+                    <Icon name="shopping-cart" size={22} color={theme.colors.text} />
+                </TouchableOpacity>
             </View>
 
-            <View style={styles.searchContainer}>
+            {/* Search */}
+            <View style={styles.searchWrap}>
                 <Searchbar
-                    placeholder="Search for parts & accessories"
+                    placeholder="Search parts & accessories"
                     onChangeText={setSearchQuery}
                     value={searchQuery}
                     style={styles.searchBar}
+                    inputStyle={styles.searchInput}
+                    iconColor={theme.colors.textSecondary}
                 />
             </View>
 
+            {/* Category Chips */}
+            <View style={styles.chipsRow}>
+                {CATEGORIES.map(cat => (
+                    <Chip
+                        key={cat}
+                        mode={activeCat === cat ? 'flat' : 'outlined'}
+                        selected={activeCat === cat}
+                        onPress={() => setActiveCat(cat)}
+                        style={[
+                            styles.chip,
+                            activeCat === cat ? styles.chipActive : styles.chipInactive,
+                        ]}
+                        textStyle={[
+                            styles.chipText,
+                            activeCat === cat ? styles.chipTextActive : styles.chipTextInactive,
+                        ]}
+                    >
+                        {cat}
+                    </Chip>
+                ))}
+            </View>
+        </View>
+    );
+
+    const renderProductItem: ListRenderItem<Product> = ({ item, index }) => {
+        const fav = !!favorites[item.id];
+        const hasDiscount = item.originalPrice && item.originalPrice > item.price;
+        const discountPct = hasDiscount
+            ? Math.round(((item.originalPrice! - item.price) / item.originalPrice!) * 100)
+            : 0;
+
+        return (
+            <TouchableOpacity
+                style={[styles.cardCol, (index + 1) % 2 === 0 && { marginRight: 0 }]}
+                onPress={() => router.push(`/product-detail?productId=${item.id}`)}
+                activeOpacity={0.9}
+            >
+                <Card style={styles.card}>
+                    {/* Image */}
+                    <View style={styles.imageWrap}>
+                        <Image source={{ uri: item.image }} style={styles.image} />
+                        {/* Favorite */}
+                        <TouchableOpacity style={styles.favBtn} onPress={() => toggleFav(item.id)}>
+                            <Icon
+                                name={fav ? 'favorite' : 'favorite-border'}
+                                size={18}
+                                color={fav ? '#fff' : theme.colors.text}
+                            />
+                        </TouchableOpacity>
+                        {/* Discount badge */}
+                        {hasDiscount && (
+                            <View style={styles.badge}>
+                                <Text style={styles.badgeText}>-{discountPct}%</Text>
+                            </View>
+                        )}
+                    </View>
+
+                    {/* Content */}
+                    <Card.Content style={styles.cardContent}>
+                        <Text style={styles.name} numberOfLines={2}>
+                            {item.name}
+                        </Text>
+
+                        <View style={styles.priceRow}>
+                            <Text style={styles.price}>GH₵{item.price.toLocaleString()}</Text>
+                            {hasDiscount && (
+                                <Text style={styles.originalPrice}>GH₵{item.originalPrice!.toLocaleString()}</Text>
+                            )}
+                        </View>
+
+                        <View style={styles.metaRow}>
+                            <Icon name="star" size={14} color={theme.colors.warning} />
+                            <Text style={styles.rating}>{item.rating.toFixed(1)}</Text>
+                            <Text style={styles.reviews}>({item.reviewCount})</Text>
+                            <View style={styles.dot} />
+                            <Text style={styles.seller} numberOfLines={1}>
+                                {item.seller}
+                            </Text>
+                        </View>
+                    </Card.Content>
+                </Card>
+            </TouchableOpacity>
+        );
+    };
+
+    return (
+        <SafeAreaView style={styles.container}>
             <FlatList
-                data={products}
+                data={filtered}
                 renderItem={renderProductItem}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => String(item.id)}
                 numColumns={2}
-                contentContainerStyle={styles.productsList}
+                ListHeaderComponent={renderHeader}
+                contentContainerStyle={styles.listContent}
+                columnWrapperStyle={styles.columnWrapper}
                 showsVerticalScrollIndicator={false}
             />
         </SafeAreaView>
     );
 }
 
+/** Styles (grouped like your Garage screen) */
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: theme.colors.background,
     },
-    header: {
-        paddingHorizontal: theme.spacing.md,
-        paddingVertical: theme.spacing.md,
+
+    // Header + search
+    headerRow: {
+        paddingHorizontal: theme.spacing.lg,
+        paddingTop: theme.spacing.lg,
+        paddingBottom: theme.spacing.md,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
-    headerTitle: {
-        fontSize: theme.fontSize.xxl,
+    title: {
+        fontSize: theme.fontSize.xl,
         fontWeight: theme.fontWeight.bold,
         color: theme.colors.text,
     },
-    searchContainer: {
-        paddingHorizontal: theme.spacing.md,
+    cartBtn: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme.colors.surface,
+        ...theme.shadows.small,
+    },
+    searchWrap: {
+        paddingHorizontal: theme.spacing.lg,
         marginBottom: theme.spacing.md,
     },
     searchBar: {
         backgroundColor: theme.colors.surface,
+        borderRadius: 24,
         elevation: 0,
     },
-    productsList: {
-        paddingHorizontal: theme.spacing.md,
+    searchInput: {
+        fontSize: theme.fontSize.sm,
     },
-    productItem: {
-        width: '48%',
-        marginRight: '2%',
-        marginBottom: theme.spacing.md,
+
+    // Category chips
+    chipsRow: {
+        paddingHorizontal: theme.spacing.lg,
+        paddingBottom: theme.spacing.md,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: theme.spacing.sm,
     },
-    productCard: {
+    chip: {
+        height: 32,
+        borderRadius: 16,
+    },
+    chipActive: {
+        backgroundColor: theme.colors.primary,
+        borderColor: theme.colors.primary,
+    },
+    chipInactive: {
         backgroundColor: theme.colors.surface,
+        borderColor: theme.colors.border,
+    },
+    chipText: {
+        fontSize: theme.fontSize.xs,
+        fontWeight: theme.fontWeight.medium,
+    },
+    chipTextActive: { color: '#fff' },
+    chipTextInactive: { color: theme.colors.text },
+
+    // Grid
+    listContent: {
+        paddingHorizontal: theme.spacing.lg,
+        paddingBottom: theme.spacing.xl,
+    },
+    columnWrapper: {
+        justifyContent: 'space-between',
+    },
+    cardCol: {
+        width: '48%',
+        marginRight: '4%',
+        marginBottom: theme.spacing.lg,
+    },
+
+    // Card
+    card: {
+        backgroundColor: theme.colors.surface,
+        borderRadius: theme.borderRadius.md,
+        overflow: 'hidden',
         ...theme.shadows.small,
     },
-    productImage: {
+    imageWrap: {
         width: '100%',
-        height: 120,
-        borderTopLeftRadius: theme.borderRadius.md,
-        borderTopRightRadius: theme.borderRadius.md,
+        aspectRatio: 16 / 10,
+        backgroundColor: theme.colors.background,
+        position: 'relative',
     },
-    productContent: {
+    image: {
+        ...StyleSheet.absoluteFillObject,
+        width: '100%',
+        height: '100%',
+    },
+    favBtn: {
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        backgroundColor: 'rgba(0,0,0,0.25)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    badge: {
+        position: 'absolute',
+        top: 8,
+        left: 8,
+        paddingHorizontal: 8,
+        height: 22,
+        borderRadius: 11,
+        backgroundColor: theme.colors.success,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    badgeText: {
+        color: '#fff',
+        fontSize: theme.fontSize.xs,
+        fontWeight: theme.fontWeight.semibold,
+    },
+    cardContent: {
         padding: theme.spacing.sm,
     },
-    productName: {
+    name: {
         fontSize: theme.fontSize.sm,
         fontWeight: theme.fontWeight.semibold,
         color: theme.colors.text,
-        marginBottom: theme.spacing.xs,
         minHeight: 36,
+        marginBottom: theme.spacing.xs,
     },
     priceRow: {
         flexDirection: 'row',
@@ -167,26 +358,33 @@ const styles = StyleSheet.create({
         color: theme.colors.primary,
     },
     originalPrice: {
-        fontSize: theme.fontSize.sm,
+        fontSize: theme.fontSize.xs,
         color: theme.colors.textSecondary,
         textDecorationLine: 'line-through',
     },
-    ratingRow: {
+    metaRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: theme.spacing.xs,
-        marginBottom: theme.spacing.xs,
+        gap: 4,
     },
     rating: {
-        fontSize: theme.fontSize.sm,
+        fontSize: theme.fontSize.xs,
         fontWeight: theme.fontWeight.medium,
         color: theme.colors.text,
     },
-    reviewCount: {
+    reviews: {
         fontSize: theme.fontSize.xs,
         color: theme.colors.textSecondary,
     },
+    dot: {
+        width: 3,
+        height: 3,
+        borderRadius: 1.5,
+        backgroundColor: theme.colors.border,
+        marginHorizontal: 4,
+    },
     seller: {
+        flex: 1,
         fontSize: theme.fontSize.xs,
         color: theme.colors.textSecondary,
     },

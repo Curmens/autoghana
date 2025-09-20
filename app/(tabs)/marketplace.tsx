@@ -2,7 +2,7 @@
 import { router } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Card, Chip, Searchbar } from 'react-native-paper';
+import { Card, Chip, IconButton, Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from './theme';
@@ -88,24 +88,40 @@ export default function MarketplaceScreen() {
 
     const renderHeader = () => (
         <View>
-            {/* Title */}
-            <View style={styles.headerRow}>
-                <Text style={styles.title}>Marketplace</Text>
-                <TouchableOpacity style={styles.cartBtn} onPress={() => console.log('Cart pressed')}>
-                    <Icon name="shopping-cart" size={22} color={theme.colors.text} />
-                </TouchableOpacity>
-            </View>
+            <View style={styles.header}>
+                <View style={styles.headerTop}>
+                    <View style={styles.userSection}>
+                        <Text style={styles.greeting}>Marketplace</Text>
+                        <Text style={styles.location}>Accra, Greater Accra • 29°C ☀️</Text>
+                    </View>
 
-            {/* Search */}
-            <View style={styles.searchWrap}>
-                <Searchbar
-                    placeholder="Search parts & accessories"
-                    onChangeText={setSearchQuery}
-                    value={searchQuery}
-                    style={styles.searchBar}
-                    inputStyle={styles.searchInput}
-                    iconColor={theme.colors.textSecondary}
-                />
+                    <View style={styles.headerActions}>
+                        <IconButton
+                            icon="shopping-cart"
+                            size={24}
+                            iconColor={theme.colors.primary}
+                            style={styles.headerButton}
+                            onPress={() => console.log('Notifications')}
+                        />
+                        <TouchableOpacity style={styles.profileButton}>
+                            <Icon name="account-circle" size={32} color={theme.colors.textSecondary} onPress={
+                                () => router.push('/profile')
+                            } />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                {/* Search Bar */}
+                <View style={styles.searchSection}>
+                    <Searchbar
+                        placeholder="Search services, parts, or mechanics..."
+                        onChangeText={setSearchQuery}
+                        value={searchQuery}
+                        style={styles.searchBar}
+                        inputStyle={styles.searchInput}
+                        iconColor={theme.colors.textSecondary}
+                    />
+                </View>
             </View>
 
             {/* Category Chips */}
@@ -216,45 +232,61 @@ const styles = StyleSheet.create({
     },
 
     // Header + search
-    headerRow: {
-        paddingHorizontal: theme.spacing.lg,
+    header: {
+        backgroundColor: theme.colors.white,
         paddingTop: theme.spacing.lg,
-        paddingBottom: theme.spacing.md,
+        paddingBottom: theme.spacing.xl,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.lightest,
+    },
+    headerTop: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: theme.spacing.xl,
+    },
+    userSection: {
+        flex: 1,
+    },
+    greeting: {
+        fontSize: theme.typography?.sizes.heading,
+        fontWeight: theme.typography?.weights.semibold,
+        color: theme.colors.textPrimary,
+        marginBottom: theme.spacing.xs,
+    },
+    location: {
+        fontSize: theme.typography?.sizes.body,
+        color: theme.colors.textSecondary,
+        fontWeight: theme.typography?.weights.regular,
+    },
+    headerActions: {
+        flexDirection: 'row',
         alignItems: 'center',
+        gap: theme.spacing.md,
     },
-    title: {
-        fontSize: theme.fontSize.xl,
-        fontWeight: theme.fontWeight.bold,
-        color: theme.colors.text,
+    headerButton: {
+        backgroundColor: theme.colors.lightest,
+        margin: 0,
     },
-    cartBtn: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: theme.colors.surface,
-        ...theme.shadows.small,
+    profileButton: {
+        padding: theme.spacing.xs,
     },
-    searchWrap: {
-        paddingHorizontal: theme.spacing.lg,
-        marginBottom: theme.spacing.md,
+    searchSection: {
+        marginTop: theme.spacing.md,
     },
     searchBar: {
-        backgroundColor: theme.colors.surface,
-        borderRadius: 24,
+        backgroundColor: theme.colors.lightest,
+        borderRadius: theme.borderRadius.xxl,
         elevation: 0,
     },
     searchInput: {
-        fontSize: theme.fontSize.sm,
+        fontSize: theme.typography?.sizes.body,
     },
 
     // Category chips
     chipsRow: {
         paddingHorizontal: theme.spacing.lg,
-        paddingBottom: theme.spacing.md,
+        paddingVertical: theme.spacing.lg,
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: theme.spacing.sm,

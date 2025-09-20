@@ -18,7 +18,7 @@ import {
   View
 } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import { Button, Card, Chip } from 'react-native-paper';
+import { Button, Card, Chip, IconButton } from 'react-native-paper';
 
 
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -324,24 +324,37 @@ export default function MyGarageScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={theme.colors.white} />
 
-
-      {/* Header */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.headerGreeting}>Hello 👋</Text>
-          <Text style={styles.headerTitle}>Your Garage</Text>
-        </View>
-        <Image
-          source={{ uri: 'https://i.pravatar.cc/100?img=3' }}
-          style={styles.avatar}
-        />
-      </View>
-
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
+
+        {/* Theme-style Header */}
+        <View style={styles.header}>
+          <View style={styles.headerTop}>
+            <View style={styles.userSection}>
+              <Text style={styles.greeting}>My Garage</Text>
+              <Text style={styles.location}>Manage and View your cars</Text>
+            </View>
+
+            <View style={styles.headerActions}>
+              <IconButton
+                icon="bell-outline"
+                size={24}
+                iconColor={theme.colors.primary}
+                style={styles.headerButton}
+                onPress={() => console.log('Notifications')}
+              />
+              <TouchableOpacity style={styles.profileButton}>
+                <Icon name="account-circle" size={32} color={theme.colors.textSecondary} onPress={
+                  () => router.push('/profile')
+                } />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+      </View>
         {/* Featured Vehicle Pager */}
         <View style={styles.pagerContainer}>
           <PagerView
@@ -531,29 +544,57 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
+  // Header Styles
   header: {
+    backgroundColor: theme.colors.white,
+    paddingHorizontal: theme.spacing.xl,
+    paddingTop: theme.spacing.lg,
+    paddingBottom: theme.spacing.xl,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.lightest,
+  },
+  headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
-    backgroundColor: theme.colors.white,
-    marginBottom: theme.spacing.lg,
+    alignItems: 'flex-start',
+    marginBottom: theme.spacing.xl,
   },
-  headerGreeting: {
-    fontSize: theme.fontSize.sm,
+  userSection: {
+    flex: 1,
+  },
+  greeting: {
+    fontSize: theme.typography?.sizes.heading,
+    fontWeight: theme.typography?.weights.semibold,
+    color: theme.colors.textPrimary,
+    marginBottom: theme.spacing.xs,
+  },
+  location: {
+    fontSize: theme.typography?.sizes.body,
     color: theme.colors.textSecondary,
+    fontWeight: theme.typography?.weights.regular,
   },
-  headerTitle: {
-    fontSize: theme.fontSize.xl,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
-    marginTop: 2,
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.md,
   },
-  avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+  headerButton: {
+    backgroundColor: theme.colors.lightest,
+    margin: 0,
+  },
+  profileButton: {
+    padding: theme.spacing.xs,
+  },
+  searchSection: {
+    marginTop: theme.spacing.md,
+  },
+  searchBar: {
+    backgroundColor: theme.colors.lightest,
+    borderRadius: theme.borderRadius.xxl,
+    elevation: 0,
+  },
+  searchInput: {
+    fontSize: theme.typography?.sizes.body,
   },
   scrollView: {
     flex: 1,

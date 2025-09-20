@@ -124,7 +124,7 @@ export default function ReportsScreen() {
                 theme.colors.success;
 
     const Header = () => (
-        <View style={styles.headerContainer}>
+        <View>
             <View style={styles.headerTopRow}>
                 <View>
                     <Text style={styles.headerTitle}>Live Reports</Text>
@@ -249,7 +249,7 @@ export default function ReportsScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.layoutContainer}>
+        <SafeAreaView style={styles.container}>
             <FlatList
                 data={filtered}
                 keyExtractor={(it) => it.id}
@@ -257,6 +257,7 @@ export default function ReportsScreen() {
                 contentContainerStyle={styles.listContent}
                 renderItem={({ item }) => <ReportCard r={item} />}
                 showsVerticalScrollIndicator={false}
+                style={{ flex: 1 }}
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
                         <Icon name="info" size={56} color={theme.colors.textSecondary} />
@@ -284,8 +285,9 @@ export default function ReportsScreen() {
 /** Styles (flattened for TypeScript compatibility) */
 const styles = StyleSheet.create({
     // Layout
-    layoutContainer: {
+    container: {
         flex: 1,
+        paddingHorizontal: theme.spacing.sm,
         backgroundColor: theme.colors.background
     },
 
